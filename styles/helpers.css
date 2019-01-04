@@ -1,0 +1,33 @@
+@import './base.css';
+@import './variables.css';
+
+/*
+ * HELPERS
+ * ========================================================================== */
+
+/*
+ * CONTAINERS
+ * -------------------------------------------------------------------------- */
+
+.container {
+  lost-utility: clearfix;
+
+  width: 100%;
+  margin: 0 auto;
+}
+
+.container--sm {
+  max-width: var(--container-width-sm);
+}
+
+.container--md {
+  max-width: var(--container-width-md);
+}
+
+.container--lg {
+  max-width: var(--container-width-lg);
+}
+
+.container--xlg {
+  max-width: var(--container-width-xlg);
+}

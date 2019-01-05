@@ -59,11 +59,11 @@ describe('With Enzyme', () => {
 		expect(app.find('p').text()).toEqual('Example Component');
 	});
 
-	it('Shows home page', () => {
-		const app = shallow(<HomePage />);
+	// it('Shows home page', () => {
+	// 	const app = shallow(<HomePage />);
 
-		expect(app.find('h1').text()).toEqual('Next Starter Kit');
-	});
+	// 	expect(app.find('h1').text()).toEqual('Next Starter Kit');
+	// });
 
 	it('Shows example page, testing dotenv, Apollo data and next/router.', async () => {
 		const wrapper = mount(

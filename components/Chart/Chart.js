@@ -90,27 +90,25 @@ class Chart extends Component {
 		const { xName, yName } = this.getXYNames();
 
 		// Prepare data for forceSimulation
-		const data = this.buildData(rawData, xName, yName);
+		this.data = this.buildData(rawData, xName, yName);
 
 		// Build force simulation
-		this.simulation = d3.forceSimulation(data);
+		this.simulation = d3
+			.forceSimulation(this.data)
+			.force('charge', d3.forceManyBody().strength(-100))
+			.force('x', d3.forceX())
+			.force('y', d3.forceY())
+			.alphaTarget(1)
+			.on('tick', this.ticked);
 
 		// Setup axis scale functions
-		this.updateScales(data, xName, yName);
+		this.updateScales(this.data, xName, yName);
 
 		this.node = this.svg.selectAll('.dot');
 
-		this.restart(data);
+		this.restart();
 
-		this.simulation.on('tick', () => {
-			this.node
-				.attr('cx', (d) => {
-					return d.x;
-				})
-				.attr('cy', (d) => {
-					return d.y;
-				});
-		});
+		// this.simulation.on('tick', this.ticked);
 
 		this.buildAxisLabels({
 			width,
@@ -123,6 +121,16 @@ class Chart extends Component {
 		// this.buildLegend({ width, color });
 	}
 
+	ticked = () => {
+		this.node
+			.attr('cx', (d) => {
+				return d.x;
+			})
+			.attr('cy', (d) => {
+				return d.y;
+			});
+	};
+
 	getXYNames = () => {
 		const xName = this.state.indicators[this.props.currentXIndicator].name;
 		const yName = this.state.indicators[this.props.currentYIndicator].name;
@@ -133,13 +141,13 @@ class Chart extends Component {
 		};
 	};
 
-	restart = (data) => {
+	restart() {
 		const { xName, yName } = this.getXYNames();
 
 		// console.log(dotData.length, data.length);
 
 		// Apply the general update pattern
-		this.node = this.node.data(data, (d) => {
+		this.node = this.node.data(this.data, (d) => {
 			// console.log(d['ISO Country code']);
 
 			return d['ISO Country code'];
@@ -171,9 +179,9 @@ class Chart extends Component {
 		// 	return d.color;
 		// })
 
-		this.simulation.nodes(data).restart();
+		this.simulation.nodes(this.data).restart();
 		// this.simulation.restart();
-	};
+	}
 
 	buildData = (rawData, xName, yName) => {
 		return rawData

@@ -3,6 +3,7 @@ import Router from 'next/router';
 
 import App from '../components/App';
 import Chart from '../components/Chart';
+// import Chart2 from '../components/Chart2';
 import { indicators } from '../lib/data';
 
 import './index.css';
@@ -39,6 +40,10 @@ export class HomePage extends Component {
 					currentXIndicator={currentXIndicator}
 					currentYIndicator={currentYIndicator}
 				/>
+				{/* <Chart2
+					currentXIndicator={currentXIndicator}
+					currentYIndicator={currentYIndicator}
+				/> */}
 
 				<h2>X</h2>
 				<select

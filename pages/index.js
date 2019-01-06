@@ -1,54 +1,80 @@
 import { Component } from 'react';
 import Router from 'next/router';
+import * as d3 from 'd3';
 
 import App from '../components/App';
-import Chart from '../components/Chart';
-// import Chart2 from '../components/Chart2';
+import Bubbles from '../components/Bubbles';
 import { indicators } from '../lib/data';
+import { processData } from '../lib/dataUtils';
 
 import './index.css';
 
 export class HomePage extends Component {
-	static defaultProps = {
-		router: {
-			query: {
-				x: 1,
-				y: 2,
-			},
-		},
+	state = {
+		data: [],
+		defaultX: 1,
+		defaultY: 2,
 	};
+
+	async componentDidMount() {
+		const data = await d3.csv('./static/data.csv');
+
+		this.setState({
+			data: processData(data),
+		});
+	}
 
 	handleSelectChange = (event, axis) => {
 		const { value } = event.target;
+		// console.log(this.props);
 
 		if (axis === 'x') {
-			Router.push(`/?x=${value}&y=${parseInt(this.props.router.query.y, 10)}`);
+			Router.push(
+				`/?x=${value}&y=${parseInt(
+					this.props.router.query.y || this.state.defaultX,
+					10,
+				)}`,
+			);
 		} else if (axis === 'y') {
-			Router.push(`/?x=${parseInt(this.props.router.query.x, 10)}&y=${value}`);
+			Router.push(
+				`/?x=${parseInt(
+					this.props.router.query.x || this.state.defaultY,
+					10,
+				)}&y=${value}`,
+			);
 		}
 	};
 
 	render() {
 		const { router } = this.props;
+		const { data } = this.state;
 
-		const currentXIndicator = parseInt(router.query.x, 10);
-		const currentYIndicator = parseInt(router.query.y, 10);
+		// console.log(data);
+		console.log(this.props);
+
+		const x = parseInt(router.query.x, 10) || 1;
+		const y = parseInt(router.query.y, 10) || 2;
+		const xName = indicators[x].name;
+		const yName = indicators[y].name;
+
+		// console.log(xName, yName);
 
 		return (
 			<App title="Home" url={router.pathname}>
-				<Chart
-					currentXIndicator={currentXIndicator}
-					currentYIndicator={currentYIndicator}
-				/>
-				{/* <Chart2
-					currentXIndicator={currentXIndicator}
-					currentYIndicator={currentYIndicator}
-				/> */}
+				<svg width={800} height={500}>
+					<Bubbles
+						xName={xName}
+						yName={yName}
+						data={data}
+						width={800}
+						height={500}
+					/>
+				</svg>
 
 				<h2>X</h2>
 				<select
 					onChange={(event) => this.handleSelectChange(event, 'x')}
-					value={currentXIndicator}
+					value={x}
 				>
 					{indicators.map((indicator, i) => {
 						return (
@@ -66,7 +92,7 @@ export class HomePage extends Component {
 				<h2>Y</h2>
 				<select
 					onChange={(event) => this.handleSelectChange(event, 'y')}
-					value={currentYIndicator}
+					value={y}
 				>
 					{indicators.map((indicator, i) => {
 						return (

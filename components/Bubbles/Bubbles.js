@@ -11,11 +11,6 @@ export default class Bubbles extends React.Component {
 			y: 200,
 		},
 		forceStrength: 0.02,
-		yearCenters: {
-			2008: { x: 300, y: 300 },
-			2009: { x: 300, y: 300 },
-			2010: { x: 300, y: 300 },
-		},
 		groupByYear: true,
 		width: 800,
 		height: 500,
@@ -23,9 +18,17 @@ export default class Bubbles extends React.Component {
 		yName: null,
 	};
 
+	state = {
+		g: null,
+		xScale: null,
+		yScale: null,
+	};
+
 	constructor(props) {
 		super(props);
+
 		const { forceStrength, center } = props;
+
 		this.simulation = d3
 			.forceSimulation()
 			.velocityDecay(0.2)
@@ -48,16 +51,12 @@ export default class Bubbles extends React.Component {
 			.stop();
 	}
 
-	state = {
-		g: null,
-	};
-
 	componentDidUpdate(prevProps) {
 		if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
 			console.log('data change');
 
-			this.renderBubbles(this.props.data);
-			this.regroupBubbles();
+			this.init(this.props.data);
+			// this.regroupBubbles();
 		}
 		if (
 			prevProps.xName !== this.props.xName ||
@@ -69,39 +68,69 @@ export default class Bubbles extends React.Component {
 		}
 	}
 
-	// shouldComponentUpdate() {
-	// 	// we will handle moving the nodes on our own with d3.js
-	// 	// make React ignore this component
-	// 	return false;
-	// }
-
 	onRef = (ref) => {
 		this.setState({ g: d3.select(ref) }, () => {
-			this.renderBubbles(this.props.data);
-			this.regroupBubbles();
+			this.init(this.props.data);
+			// this.regroupBubbles();
 		});
 	};
 
-	ticked() {
-		this.state.g.selectAll('.bubble').attr('transform', (d) => {
-			if (typeof d.x === 'number' && typeof d.y === 'number') {
-				return `translate(${d.x}, ${d.y})`;
-			}
-		});
-		// .attr('cx', (d) => d.x)
-		// .attr('cy', (d) => d.y);
-	}
+	init(data) {
+		console.log('init()');
+		const { width, height } = this.props;
 
-	charge(d) {
-		return -this.props.forceStrength * d.radius ** 2.0;
+		// Create selection
+		const bubbles = this.state.g.selectAll('.bubble').data(data, (d) => d.id);
+
+		// Exit
+		bubbles.exit().remove();
+
+		// Enter
+		const bubblesE = bubbles
+			.enter()
+			.append('circle')
+			.classed('bubble', true)
+			.attr('r', 0)
+			.attr('cx', (d) => d.x)
+			.attr('cy', (d) => d.y)
+			// .attr('fill', (d) => fillColor(d.group))
+			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
+			.attr('stroke-width', 2)
+			.on('mouseover', showDetail) // eslint-disable-line
+			.on('mouseout', hideDetail); // eslint-disable-line
+
+		bubblesE
+			.transition()
+			.duration(2000)
+			.attr('r', (d) => d.radius)
+			.on('end', () => {
+				this.simulation
+					.nodes(data)
+					.alpha(1)
+					.restart();
+			});
+
+		// Axis
+		const xScale = d3.scaleLinear().range([0, width]);
+		const yScale = d3.scaleLinear().range([height, 0]);
+
+		this.setState(
+			{
+				xScale,
+				yScale,
+			},
+			() => {
+				this.regroupBubbles();
+			},
+		);
 	}
 
 	regroupBubbles = () => {
 		console.log('regroup bubbles');
 
-		const { forceStrength, width, height, data, xName, yName } = this.props;
+		const { forceStrength, data, xName, yName } = this.props;
+		const { xScale, yScale } = this.state;
 
-		const xScale = d3.scaleLinear().range([0, width]);
 		xScale
 			.domain(
 				d3.extent(data, (d) => {
@@ -110,7 +139,6 @@ export default class Bubbles extends React.Component {
 			)
 			.nice();
 
-		const yScale = d3.scaleLinear().range([height, 0]);
 		yScale
 			.domain(
 				d3.extent(data, (d) => {
@@ -139,39 +167,23 @@ export default class Bubbles extends React.Component {
 		this.simulation.alpha(1).restart();
 	};
 
-	renderBubbles(data) {
-		console.log('render bubbles');
-
-		this.bubbles = this.state.g.selectAll('.bubble').data(data, (d) => d.id);
-
-		// Exit
-		this.bubbles.exit().remove();
-
-		// Enter
-		const bubblesE = this.bubbles
-			.enter()
-			.append('circle')
-			.classed('bubble', true)
-			.attr('r', 0)
-			.attr('cx', (d) => d.x)
-			.attr('cy', (d) => d.y)
-			// .attr('fill', (d) => fillColor(d.group))
-			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
-			.attr('stroke-width', 2)
-			.on('mouseover', showDetail) // eslint-disable-line
-			.on('mouseout', hideDetail); // eslint-disable-line
-
-		bubblesE
-			.transition()
-			.duration(2000)
-			.attr('r', (d) => d.radius)
-			.on('end', () => {
-				this.simulation
-					.nodes(data)
-					.alpha(1)
-					.restart();
-			});
+	ticked() {
+		this.state.g.selectAll('.bubble').attr('transform', (d) => {
+			if (typeof d.x === 'number' && typeof d.y === 'number') {
+				return `translate(${d.x}, ${d.y})`;
+			}
+		});
 	}
+
+	charge(d) {
+		return -this.props.forceStrength * d.radius ** 2.0;
+	}
+
+	// shouldComponentUpdate() {
+	// 	// we will handle moving the nodes on our own with d3.js
+	// 	// make React ignore this component
+	// 	return false;
+	// }
 
 	render() {
 		return <g ref={this.onRef} className="bubbles" />;
@@ -184,20 +196,11 @@ Bubbles.propTypes = {
 		y: PropTypes.number.isRequired,
 	}),
 	forceStrength: PropTypes.number.isRequired,
-	groupByYear: PropTypes.bool.isRequired,
-	yearCenters: PropTypes.objectOf(
-		PropTypes.shape({
-			x: PropTypes.number.isRequired,
-			y: PropTypes.number.isRequired,
-		}).isRequired,
-	).isRequired,
 	data: PropTypes.arrayOf(
 		PropTypes.shape({
 			x: PropTypes.number.isRequired,
 			id: PropTypes.string.isRequired,
 			radius: PropTypes.number.isRequired,
-			value: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
 		}),
 	),
 	width: PropTypes.number,

@@ -50,7 +50,7 @@ export class HomePage extends Component {
 		const { data } = this.state;
 
 		// console.log(data);
-		console.log(this.props);
+		// console.log(this.props);
 
 		const x = parseInt(router.query.x, 10) || 1;
 		const y = parseInt(router.query.y, 10) || 2;
@@ -61,15 +61,13 @@ export class HomePage extends Component {
 
 		return (
 			<App title="Home" url={router.pathname}>
-				<svg width={800} height={500}>
-					<Bubbles
-						xName={xName}
-						yName={yName}
-						data={data}
-						width={800}
-						height={500}
-					/>
-				</svg>
+				<Bubbles
+					xName={xName}
+					yName={yName}
+					data={data}
+					width={800}
+					height={500}
+				/>
 
 				<h2>X</h2>
 				<select

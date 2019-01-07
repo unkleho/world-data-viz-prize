@@ -293,9 +293,11 @@ class Chart extends Component {
 	};
 
 	render() {
-		// const {} = this.props;
+		const { width, height } = this.props;
 
-		return <g ref={this.onRef} className="chart" />;
+		return (
+			<svg ref={this.onRef} className="chart" width={width} height={height} />
+		);
 	}
 }
 

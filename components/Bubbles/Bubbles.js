@@ -6,9 +6,16 @@ import * as d3 from 'd3';
 
 export default class Bubbles extends React.Component {
 	static defaultProps = {
+		data: [],
 		center: {
 			x: 400,
 			y: 200,
+		},
+		padding: {
+			top: 50,
+			right: 50,
+			bottom: 50,
+			left: 50,
 		},
 		forceStrength: 0.02,
 		groupByYear: true,
@@ -22,6 +29,8 @@ export default class Bubbles extends React.Component {
 		g: null,
 		xScale: null,
 		yScale: null,
+		xAxis: null,
+		yAxis: null,
 	};
 
 	constructor(props) {
@@ -56,8 +65,8 @@ export default class Bubbles extends React.Component {
 			console.log('data change');
 
 			this.init(this.props.data);
-			// this.regroupBubbles();
 		}
+
 		if (
 			prevProps.xName !== this.props.xName ||
 			prevProps.yName !== this.props.yName
@@ -71,13 +80,17 @@ export default class Bubbles extends React.Component {
 	onRef = (ref) => {
 		this.setState({ g: d3.select(ref) }, () => {
 			this.init(this.props.data);
-			// this.regroupBubbles();
 		});
 	};
 
 	init(data) {
 		console.log('init()');
-		const { width, height } = this.props;
+		const { xName, yName, padding } = this.props;
+		const { width, height } = this.getInnerSize(
+			this.props.width,
+			this.props.height,
+			padding,
+		);
 
 		// Create selection
 		const bubbles = this.state.g.selectAll('.bubble').data(data, (d) => d.id);
@@ -95,14 +108,20 @@ export default class Bubbles extends React.Component {
 			.attr('cy', (d) => d.y)
 			// .attr('fill', (d) => fillColor(d.group))
 			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
-			.attr('stroke-width', 2)
+			// .attr('stroke-width', 2)
 			.on('mouseover', showDetail) // eslint-disable-line
 			.on('mouseout', hideDetail); // eslint-disable-line
 
 		bubblesE
 			.transition()
 			.duration(2000)
-			.attr('r', (d) => d.radius)
+			.attr('r', (d) => {
+				if (!d[xName] || !d[yName]) {
+					return 0;
+				}
+
+				return d.radius;
+			})
 			.on('end', () => {
 				this.simulation
 					.nodes(data)
@@ -113,24 +132,79 @@ export default class Bubbles extends React.Component {
 		// Axis
 		const xScale = d3.scaleLinear().range([0, width]);
 		const yScale = d3.scaleLinear().range([height, 0]);
+		const xAxis = d3.axisBottom(xScale);
+		const yAxis = d3.axisRight(yScale);
 
 		this.setState(
 			{
 				xScale,
 				yScale,
+				xAxis,
+				yAxis,
 			},
 			() => {
 				this.regroupBubbles();
+				// this.xAxis = d3.axisBottom(this.state.xScale);
+				// this.yAxis = d3.axisLeft(this.state.yScale);
+
+				this.buildAxisLabels({
+					width,
+					height,
+					xAxis,
+					yAxis,
+					xName,
+					yName,
+				});
 			},
 		);
 	}
+
+	getInnerSize = (
+		width = 800,
+		height = 500,
+		padding = { top: 0, right: 0, bottom: 0, left: 0 },
+	) => {
+		return {
+			width: width - padding.right - padding.left,
+			height: height - padding.top - padding.bottom,
+		};
+	};
+
+	buildAxisLabels = ({ width, height, xAxis, yAxis, xName, yName }) => {
+		// Add X Label
+		this.state.g
+			.append('g')
+			.attr('class', 'x axis')
+			.attr('transform', `translate(0, ${height})`)
+			.call(xAxis)
+			.append('text')
+			.attr('class', 'label')
+			.attr('x', width)
+			.attr('y', -6)
+			.style('text-anchor', 'end')
+			.text(xName);
+
+		// Add Y Label
+		this.state.g
+			.append('g')
+			.attr('class', 'y axis')
+			.call(yAxis)
+			.append('text')
+			.attr('class', 'label')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 6)
+			.attr('dy', '.71em')
+			.style('text-anchor', 'end')
+			.text(yName);
+	};
 
 	regroupBubbles = () => {
 		console.log('regroup bubbles');
 
 		const { forceStrength, data, xName, yName } = this.props;
-		const { xScale, yScale } = this.state;
+		const { xScale, yScale, xAxis, yAxis } = this.state;
 
+		// Update scales
 		xScale
 			.domain(
 				d3.extent(data, (d) => {
@@ -146,6 +220,29 @@ export default class Bubbles extends React.Component {
 				}),
 			)
 			.nice();
+
+		d3
+			.selectAll('.x')
+			.transition()
+			.duration(1000)
+			.call(xAxis);
+
+		d3
+			.selectAll('.y')
+			.transition()
+			.duration(1000)
+			.call(yAxis);
+
+		// Update bubbles
+		this.state.g.selectAll('.bubble').attr('r', (d) => {
+			// console.log(d);
+
+			if (!d[xName] || !d[yName]) {
+				return 0;
+			}
+
+			return d.radius;
+		});
 
 		// if (groupByYear) {
 		this.simulation
@@ -186,16 +283,23 @@ export default class Bubbles extends React.Component {
 	// }
 
 	render() {
-		return <g ref={this.onRef} className="bubbles" />;
+		const { width, height, padding } = this.props;
+
+		return (
+			<svg className="bubbles" width={width} height={height}>
+				<g
+					ref={this.onRef}
+					className="bubbles__group"
+					style={{
+						transform: `translate(${padding.top}px, ${padding.left}px)`,
+					}}
+				/>
+			</svg>
+		);
 	}
 }
 
 Bubbles.propTypes = {
-	center: PropTypes.shape({
-		x: PropTypes.number.isRequired,
-		y: PropTypes.number.isRequired,
-	}),
-	forceStrength: PropTypes.number.isRequired,
 	data: PropTypes.arrayOf(
 		PropTypes.shape({
 			x: PropTypes.number.isRequired,
@@ -203,6 +307,11 @@ Bubbles.propTypes = {
 			radius: PropTypes.number.isRequired,
 		}),
 	),
+	center: PropTypes.shape({
+		x: PropTypes.number.isRequired,
+		y: PropTypes.number.isRequired,
+	}),
+	forceStrength: PropTypes.number.isRequired,
 	width: PropTypes.number,
 	height: PropTypes.number,
 	xName: PropTypes.string,
@@ -217,7 +326,7 @@ export function showDetail(d) {
 	// change outline to indicate hover state.
 	d3.select(this).attr('stroke', 'black');
 
-	console.log(d.country);
+	console.log(d.country, d);
 
 	// const content =
 	// 	`<span class="name">Title: </span><span class="value">${

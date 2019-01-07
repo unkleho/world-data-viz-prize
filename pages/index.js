@@ -52,8 +52,10 @@ export class HomePage extends Component {
 		// console.log(data);
 		// console.log(this.props);
 
-		const x = parseInt(router.query.x, 10) || 1;
-		const y = parseInt(router.query.y, 10) || 2;
+		const x =
+			typeof router.query.x === 'undefined' ? 0 : parseInt(router.query.x, 10);
+		const y =
+			typeof router.query.y === 'undefined' ? 1 : parseInt(router.query.y, 10);
 		const xName = indicators[x].name;
 		const yName = indicators[y].name;
 
@@ -67,6 +69,12 @@ export class HomePage extends Component {
 					data={data}
 					width={800}
 					height={500}
+					onBubbleMouseover={(event, d, i) => {
+						console.log(event, d, i);
+					}}
+					onBubbleMouseout={(event, d, i) => {
+						console.log(event, d, i);
+					}}
 				/>
 
 				<h2>X</h2>

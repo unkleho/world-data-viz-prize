@@ -109,8 +109,8 @@ export default class Bubbles extends React.Component {
 			// .attr('fill', (d) => fillColor(d.group))
 			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
 			// .attr('stroke-width', 2)
-			.on('mouseover', showDetail) // eslint-disable-line
-			.on('mouseout', hideDetail); // eslint-disable-line
+			.on('mouseover', this.handleBubbleMouseover) // eslint-disable-line
+			.on('mouseout', this.handleBubbleMouseout); // eslint-disable-line
 
 		bubblesE
 			.transition()
@@ -133,7 +133,7 @@ export default class Bubbles extends React.Component {
 		const xScale = d3.scaleLinear().range([0, width]);
 		const yScale = d3.scaleLinear().range([height, 0]);
 		const xAxis = d3.axisBottom(xScale);
-		const yAxis = d3.axisRight(yScale);
+		const yAxis = d3.axisLeft(yScale);
 
 		this.setState(
 			{
@@ -144,8 +144,6 @@ export default class Bubbles extends React.Component {
 			},
 			() => {
 				this.regroupBubbles();
-				// this.xAxis = d3.axisBottom(this.state.xScale);
-				// this.yAxis = d3.axisLeft(this.state.yScale);
 
 				this.buildAxisLabels({
 					width,
@@ -182,6 +180,7 @@ export default class Bubbles extends React.Component {
 			.attr('x', width)
 			.attr('y', -6)
 			.style('text-anchor', 'end')
+			.attr('fill', 'black')
 			.text(xName);
 
 		// Add Y Label
@@ -195,7 +194,16 @@ export default class Bubbles extends React.Component {
 			.attr('y', 6)
 			.attr('dy', '.71em')
 			.style('text-anchor', 'end')
+			.attr('fill', 'black')
 			.text(yName);
+	};
+
+	updateAxisLabel = (name, axis = 'x') => {
+		if (axis === 'x') {
+			this.state.g.selectAll('.x .label').text(name);
+		} else if (axis === 'y') {
+			this.state.g.selectAll('.y .label').text(name);
+		}
 	};
 
 	regroupBubbles = () => {
@@ -205,33 +213,12 @@ export default class Bubbles extends React.Component {
 		const { xScale, yScale, xAxis, yAxis } = this.state;
 
 		// Update scales
-		xScale
-			.domain(
-				d3.extent(data, (d) => {
-					return d[xName];
-				}),
-			)
-			.nice();
+		this.updateScales(data, xName, yName);
 
-		yScale
-			.domain(
-				d3.extent(data, (d) => {
-					return d[yName];
-				}),
-			)
-			.nice();
-
-		d3
-			.selectAll('.x')
-			.transition()
-			.duration(1000)
-			.call(xAxis);
-
-		d3
-			.selectAll('.y')
-			.transition()
-			.duration(1000)
-			.call(yAxis);
+		// Update axes
+		this.updateAxes(xAxis, yAxis);
+		this.updateAxisLabel(xName, 'x');
+		this.updateAxisLabel(yName, 'y');
 
 		// Update bubbles
 		this.state.g.selectAll('.bubble').attr('r', (d) => {
@@ -262,6 +249,52 @@ export default class Bubbles extends React.Component {
 			);
 
 		this.simulation.alpha(1).restart();
+	};
+
+	updateScales = (data, xName, yName) => {
+		const { xScale, yScale } = this.state;
+
+		xScale
+			.domain(
+				d3.extent(data, (d) => {
+					return d[xName];
+				}),
+			)
+			.nice();
+
+		yScale
+			.domain(
+				d3.extent(data, (d) => {
+					return d[yName];
+				}),
+			)
+			.nice();
+	};
+
+	updateAxes = (xAxis, yAxis) => {
+		d3
+			.selectAll('.x')
+			.transition()
+			.duration(1000)
+			.call(xAxis);
+
+		d3
+			.selectAll('.y')
+			.transition()
+			.duration(1000)
+			.call(yAxis);
+	};
+
+	handleBubbleMouseover = (d, i) => {
+		if (typeof this.props.onBubbleMouseover === 'function') {
+			this.props.onBubbleMouseover(d3.event, d, i);
+		}
+	};
+
+	handleBubbleMouseout = (d, i) => {
+		if (typeof this.props.onBubbleMouseout === 'function') {
+			this.props.onBubbleMouseout(d3.event, d, i);
+		}
 	};
 
 	ticked() {
@@ -316,6 +349,8 @@ Bubbles.propTypes = {
 	height: PropTypes.number,
 	xName: PropTypes.string,
 	yName: PropTypes.string,
+	onBubbleMouseover: PropTypes.func,
+	onBubbleMouseout: PropTypes.func,
 };
 
 /*

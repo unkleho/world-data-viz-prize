@@ -2,12 +2,14 @@ import { Component, Fragment } from 'react';
 import Router from 'next/router';
 import * as d3 from 'd3';
 import { VictoryAxis } from 'victory';
+import queryString from 'query-string';
 
 import App from '../components/App';
 import Bubbles from '../components/Bubbles';
 import BubbleChart from '../components/BubbleChart';
 import Tooltip from '../components/Tooltip';
 import Legend from '../components/Legend';
+import InfoCard from '../components/InfoCard';
 import { indicators, continents } from '../lib/data';
 import { processData } from '../lib/dataUtils';
 import victoryTheme from '../lib/victoryTheme';
@@ -32,6 +34,17 @@ export class HomePage extends Component {
 			data: processData(data),
 		});
 	}
+
+	handleBubbleClick = (event, data) => {
+		const query = {
+			...this.props.router.query,
+			country: data.id,
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
+	};
 
 	handleSelectChange = (event, axis) => {
 		const { value } = event.target;
@@ -118,6 +131,7 @@ export class HomePage extends Component {
 											tooltipContent: null,
 										});
 									}}
+									onBubbleClick={this.handleBubbleClick}
 								/>
 
 								{xDomain &&
@@ -232,6 +246,8 @@ export class HomePage extends Component {
 						{tooltipContent}
 					</Tooltip>
 				)}
+
+				<InfoCard country={data.find((d) => d.id === router.query.country)} />
 			</App>
 		);
 	}

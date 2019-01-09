@@ -31,6 +31,7 @@ export default class Bubbles extends React.Component {
 		// yAxis: null,
 		width: null,
 		height: null,
+		clickedId: null,
 	};
 
 	constructor(props) {
@@ -63,11 +64,6 @@ export default class Bubbles extends React.Component {
 		this.bubblesRef = React.createRef();
 	}
 
-	// componentDidMount() {
-	// 	window.addEventListener('resize', this.updateDimensions);
-	// 	this.updateDimensions();
-	// }
-
 	componentDidUpdate(prevProps) {
 		if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
 			console.log('data change');
@@ -95,14 +91,6 @@ export default class Bubbles extends React.Component {
 		window.removeEventListener('resize', this.updateDimensions);
 	}
 
-	/** Update width and height values of svg wrapper in state */
-	// updateDimensions = () => {
-	// 	this.setState({
-	// 		width: this.bubblesRef.current.clientWidth,
-	// 		height: this.bubblesRef.current.clientHeight,
-	// 	});
-	// };
-
 	/** Use callback ref to store ref in state */
 	onBubblesGroupRef = (ref) => {
 		this.setState({ g: d3.select(ref) }, () => {
@@ -110,7 +98,7 @@ export default class Bubbles extends React.Component {
 		});
 	};
 
-	init(data) {
+	init = (data) => {
 		const { xName, yName, padding } = this.props;
 		const { width, height } = this.getInnerSize(
 			this.props.width,
@@ -129,6 +117,7 @@ export default class Bubbles extends React.Component {
 			.enter()
 			.append('circle')
 			.classed('bubble', true)
+			.attr('id', (d) => d.id)
 			.attr('r', 0)
 			.attr('cx', (d) => d.x)
 			.attr('cy', (d) => d.y)
@@ -137,7 +126,11 @@ export default class Bubbles extends React.Component {
 			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
 			// .attr('stroke-width', 2)
 			.on('mouseover', this.handleBubbleMouseover) // eslint-disable-line
-			.on('mouseout', this.handleBubbleMouseout); // eslint-disable-line
+			.on('mouseout', this.handleBubbleMouseout) // eslint-disable-line
+			.on('click', (d, i) => {
+				this.handleBubbleClick(d, i);
+				// d3.select(this).attr('r', 20);
+			}); // eslint-disable-line
 
 		bubblesE
 			.transition()
@@ -156,35 +149,22 @@ export default class Bubbles extends React.Component {
 					.restart();
 			});
 
-		// Axis
-		console.log(width, height);
-
 		const { xScale, yScale } = this.getScales(width, height);
-		// const { xAxis, yAxis } = this.getAxes(xScale, yScale);
-		// const xAxis = d3.axisBottom(xScale);
-		// const yAxis = d3.axisLeft(yScale);
 
 		this.setState(
 			{
 				xScale,
 				yScale,
-				// xAxis,
-				// yAxis,
 			},
 			() => {
 				this.regroupBubbles();
-
-				// this.buildAxisLabels({
-				// 	width,
-				// 	height,
-				// 	xAxis,
-				// 	yAxis,
-				// 	xName,
-				// 	yName,
-				// });
 			},
 		);
-	}
+	};
+
+	// setBubbles = () => {
+
+	// }
 
 	/** Return d3 scale functions based on width and height */
 	getScales = (width, height) => {
@@ -193,13 +173,6 @@ export default class Bubbles extends React.Component {
 			yScale: d3.scaleLinear().range([height, 0]),
 		};
 	};
-
-	// getAxes = (xScale, yScale) => {
-	// 	return {
-	// 		xAxis: d3.axisBottom(xScale),
-	// 		yAxis: d3.axisLeft(yScale),
-	// 	};
-	// };
 
 	/** Work out bubble chart dimensions taking padding into account */
 	getInnerSize = (
@@ -213,44 +186,6 @@ export default class Bubbles extends React.Component {
 		};
 	};
 
-	// buildAxisLabels = ({ width, height, xAxis, yAxis, xName, yName }) => {
-	// 	// Add X Label
-	// 	this.state.g
-	// 		.append('g')
-	// 		.attr('class', 'x axis')
-	// 		.attr('transform', `translate(0, ${height})`)
-	// 		.call(xAxis)
-	// 		.append('text')
-	// 		.attr('class', 'label')
-	// 		.attr('x', width)
-	// 		.attr('y', -6)
-	// 		.style('text-anchor', 'end')
-	// 		.attr('fill', 'black')
-	// 		.text(xName);
-
-	// 	// Add Y Label
-	// 	this.state.g
-	// 		.append('g')
-	// 		.attr('class', 'y axis')
-	// 		.call(yAxis)
-	// 		.append('text')
-	// 		.attr('class', 'label')
-	// 		.attr('transform', 'rotate(-90)')
-	// 		.attr('y', 6)
-	// 		.attr('dy', '.71em')
-	// 		.style('text-anchor', 'end')
-	// 		.attr('fill', 'black')
-	// 		.text(yName);
-	// };
-
-	// updateAxisLabel = (name, axis = 'x') => {
-	// 	if (axis === 'x') {
-	// 		this.state.g.selectAll('.x .label').text(name);
-	// 	} else if (axis === 'y') {
-	// 		this.state.g.selectAll('.y .label').text(name);
-	// 	}
-	// };
-
 	regroupBubbles = () => {
 		const { forceStrength, data, xName, yName, padding } = this.props;
 		// const { xAxis, yAxis } = this.state;
@@ -263,12 +198,6 @@ export default class Bubbles extends React.Component {
 		// Update scales
 		const { xScale, yScale } = this.getScales(width, height);
 		this.updateScaleDomains(data, xScale, yScale, xName, yName);
-
-		// Update axes
-		// const { xAxis, yAxis } = this.getAxes(xScale, yScale);
-		// this.updateAxes(xAxis, yAxis, xScale, yScale);
-		// this.updateAxisLabel(xName, 'x');
-		// this.updateAxisLabel(yName, 'y');
 
 		// Update bubbles
 		this.state.g.selectAll('.bubble').attr('r', (d) => {
@@ -329,24 +258,6 @@ export default class Bubbles extends React.Component {
 		}
 	};
 
-	updateAxes = (xAxis, yAxis, xScale, yScale) => {
-		if (xAxis && yAxis) {
-			d3
-				.selectAll('.x')
-				.transition()
-				.duration(1000)
-				.call(xScale)
-				.call(xAxis);
-
-			d3
-				.selectAll('.y')
-				.transition()
-				.duration(1000)
-				.call(yScale)
-				.call(yAxis);
-		}
-	};
-
 	/** Set bubble fill colour */
 	bubbleFill = (d) => {
 		if (typeof this.props.bubbleFill === 'function') {
@@ -357,6 +268,18 @@ export default class Bubbles extends React.Component {
 			return this.props.bubbleFill;
 		}
 	};
+
+	ticked() {
+		this.state.g.selectAll('.bubble').attr('transform', (d) => {
+			if (typeof d.x === 'number' && typeof d.y === 'number') {
+				return `translate(${d.x}, ${d.y})`;
+			}
+		});
+	}
+
+	charge(d) {
+		return -this.props.forceStrength * d.radius ** 2.0;
+	}
 
 	/** Set bubble opacity */
 	bubbleOpacity = (d) => {
@@ -381,17 +304,19 @@ export default class Bubbles extends React.Component {
 		}
 	};
 
-	ticked() {
-		this.state.g.selectAll('.bubble').attr('transform', (d) => {
-			if (typeof d.x === 'number' && typeof d.y === 'number') {
-				return `translate(${d.x}, ${d.y})`;
-			}
-		});
-	}
+	handleBubbleClick = (d, i) => {
+		if (typeof this.props.onBubbleClick === 'function') {
+			this.props.onBubbleClick(d3.event, d, i);
+		}
 
-	charge(d) {
-		return -this.props.forceStrength * d.radius ** 2.0;
-	}
+		// WIP
+		d3.selectAll('.bubble').attr('r', (d) => d.radius);
+		d3.selectAll(`[id=${d.id}]`).attr('r', 20);
+
+		this.setState({
+			clickedId: d.id,
+		});
+	};
 
 	// shouldComponentUpdate() {
 	// 	// we will handle moving the nodes on our own with d3.js
@@ -403,12 +328,6 @@ export default class Bubbles extends React.Component {
 		const { padding } = this.props;
 
 		return (
-			// <svg
-			// 	ref={this.bubblesRef}
-			// 	className="bubbles"
-			// 	width={'100%'}
-			// 	height={height}
-			// >
 			<g
 				ref={this.onBubblesGroupRef}
 				className="bubbles__group"
@@ -416,7 +335,6 @@ export default class Bubbles extends React.Component {
           transform: `translate(${padding.top}px, ${padding.left}px)`,
         }}
 			/>
-			// </svg>
 		);
 	}
 }
@@ -448,4 +366,5 @@ Bubbles.propTypes = {
 	bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
 	onBubbleMouseover: PropTypes.func,
 	onBubbleMouseout: PropTypes.func,
+	onBubbleClick: PropTypes.func,
 };

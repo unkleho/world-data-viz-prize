@@ -27,8 +27,8 @@ export default class Bubbles extends React.Component {
 		g: null,
 		xScale: null,
 		yScale: null,
-		xAxis: null,
-		yAxis: null,
+		// xAxis: null,
+		// yAxis: null,
 		width: null,
 		height: null,
 	};
@@ -38,6 +38,7 @@ export default class Bubbles extends React.Component {
 
 		const { forceStrength, velocityDecay, center } = props;
 
+		// Set up force simulation
 		this.simulation = d3
 			.forceSimulation()
 			.velocityDecay(velocityDecay)
@@ -62,12 +63,12 @@ export default class Bubbles extends React.Component {
 		this.bubblesRef = React.createRef();
 	}
 
-	componentDidMount() {
-		window.addEventListener('resize', this.updateDimensions);
-		this.updateDimensions();
-	}
+	// componentDidMount() {
+	// 	window.addEventListener('resize', this.updateDimensions);
+	// 	this.updateDimensions();
+	// }
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate(prevProps) {
 		if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
 			console.log('data change');
 
@@ -83,8 +84,8 @@ export default class Bubbles extends React.Component {
 			this.regroupBubbles();
 		}
 
-		if (prevState.width !== this.state.width) {
-			console.log('width change', this.state.width);
+		if (prevProps.width !== this.props.width) {
+			console.log('width change', this.props.width);
 
 			this.regroupBubbles();
 		}
@@ -95,13 +96,14 @@ export default class Bubbles extends React.Component {
 	}
 
 	/** Update width and height values of svg wrapper in state */
-	updateDimensions = () => {
-		this.setState({
-			width: this.bubblesRef.current.clientWidth,
-			height: this.bubblesRef.current.clientHeight,
-		});
-	};
+	// updateDimensions = () => {
+	// 	this.setState({
+	// 		width: this.bubblesRef.current.clientWidth,
+	// 		height: this.bubblesRef.current.clientHeight,
+	// 	});
+	// };
 
+	/** Use callback ref to store ref in state */
 	onBubblesGroupRef = (ref) => {
 		this.setState({ g: d3.select(ref) }, () => {
 			this.init(this.props.data);
@@ -111,8 +113,8 @@ export default class Bubbles extends React.Component {
 	init(data) {
 		const { xName, yName, padding } = this.props;
 		const { width, height } = this.getInnerSize(
-			this.state.width,
-			this.state.height,
+			this.props.width,
+			this.props.height,
 			padding,
 		);
 
@@ -155,8 +157,10 @@ export default class Bubbles extends React.Component {
 			});
 
 		// Axis
+		console.log(width, height);
+
 		const { xScale, yScale } = this.getScales(width, height);
-		const { xAxis, yAxis } = this.getAxes(xScale, yScale);
+		// const { xAxis, yAxis } = this.getAxes(xScale, yScale);
 		// const xAxis = d3.axisBottom(xScale);
 		// const yAxis = d3.axisLeft(yScale);
 
@@ -164,20 +168,20 @@ export default class Bubbles extends React.Component {
 			{
 				xScale,
 				yScale,
-				xAxis,
-				yAxis,
+				// xAxis,
+				// yAxis,
 			},
 			() => {
 				this.regroupBubbles();
 
-				this.buildAxisLabels({
-					width,
-					height,
-					xAxis,
-					yAxis,
-					xName,
-					yName,
-				});
+				// this.buildAxisLabels({
+				// 	width,
+				// 	height,
+				// 	xAxis,
+				// 	yAxis,
+				// 	xName,
+				// 	yName,
+				// });
 			},
 		);
 	}
@@ -190,12 +194,12 @@ export default class Bubbles extends React.Component {
 		};
 	};
 
-	getAxes = (xScale, yScale) => {
-		return {
-			xAxis: d3.axisBottom(xScale),
-			yAxis: d3.axisLeft(yScale),
-		};
-	};
+	// getAxes = (xScale, yScale) => {
+	// 	return {
+	// 		xAxis: d3.axisBottom(xScale),
+	// 		yAxis: d3.axisLeft(yScale),
+	// 	};
+	// };
 
 	/** Work out bubble chart dimensions taking padding into account */
 	getInnerSize = (
@@ -209,50 +213,50 @@ export default class Bubbles extends React.Component {
 		};
 	};
 
-	buildAxisLabels = ({ width, height, xAxis, yAxis, xName, yName }) => {
-		// Add X Label
-		this.state.g
-			.append('g')
-			.attr('class', 'x axis')
-			.attr('transform', `translate(0, ${height})`)
-			.call(xAxis)
-			.append('text')
-			.attr('class', 'label')
-			.attr('x', width)
-			.attr('y', -6)
-			.style('text-anchor', 'end')
-			.attr('fill', 'black')
-			.text(xName);
+	// buildAxisLabels = ({ width, height, xAxis, yAxis, xName, yName }) => {
+	// 	// Add X Label
+	// 	this.state.g
+	// 		.append('g')
+	// 		.attr('class', 'x axis')
+	// 		.attr('transform', `translate(0, ${height})`)
+	// 		.call(xAxis)
+	// 		.append('text')
+	// 		.attr('class', 'label')
+	// 		.attr('x', width)
+	// 		.attr('y', -6)
+	// 		.style('text-anchor', 'end')
+	// 		.attr('fill', 'black')
+	// 		.text(xName);
 
-		// Add Y Label
-		this.state.g
-			.append('g')
-			.attr('class', 'y axis')
-			.call(yAxis)
-			.append('text')
-			.attr('class', 'label')
-			.attr('transform', 'rotate(-90)')
-			.attr('y', 6)
-			.attr('dy', '.71em')
-			.style('text-anchor', 'end')
-			.attr('fill', 'black')
-			.text(yName);
-	};
+	// 	// Add Y Label
+	// 	this.state.g
+	// 		.append('g')
+	// 		.attr('class', 'y axis')
+	// 		.call(yAxis)
+	// 		.append('text')
+	// 		.attr('class', 'label')
+	// 		.attr('transform', 'rotate(-90)')
+	// 		.attr('y', 6)
+	// 		.attr('dy', '.71em')
+	// 		.style('text-anchor', 'end')
+	// 		.attr('fill', 'black')
+	// 		.text(yName);
+	// };
 
-	updateAxisLabel = (name, axis = 'x') => {
-		if (axis === 'x') {
-			this.state.g.selectAll('.x .label').text(name);
-		} else if (axis === 'y') {
-			this.state.g.selectAll('.y .label').text(name);
-		}
-	};
+	// updateAxisLabel = (name, axis = 'x') => {
+	// 	if (axis === 'x') {
+	// 		this.state.g.selectAll('.x .label').text(name);
+	// 	} else if (axis === 'y') {
+	// 		this.state.g.selectAll('.y .label').text(name);
+	// 	}
+	// };
 
 	regroupBubbles = () => {
 		const { forceStrength, data, xName, yName, padding } = this.props;
-		const { xAxis, yAxis } = this.state;
+		// const { xAxis, yAxis } = this.state;
 		const { width, height } = this.getInnerSize(
-			this.state.width,
-			this.state.height,
+			this.props.width,
+			this.props.height,
 			padding,
 		);
 
@@ -262,9 +266,9 @@ export default class Bubbles extends React.Component {
 
 		// Update axes
 		// const { xAxis, yAxis } = this.getAxes(xScale, yScale);
-		this.updateAxes(xAxis, yAxis, xScale, yScale);
-		this.updateAxisLabel(xName, 'x');
-		this.updateAxisLabel(yName, 'y');
+		// this.updateAxes(xAxis, yAxis, xScale, yScale);
+		// this.updateAxisLabel(xName, 'x');
+		// this.updateAxisLabel(yName, 'y');
 
 		// Update bubbles
 		this.state.g.selectAll('.bubble').attr('r', (d) => {
@@ -396,23 +400,23 @@ export default class Bubbles extends React.Component {
 	// }
 
 	render() {
-		const { height, padding } = this.props;
+		const { padding } = this.props;
 
 		return (
-			<svg
-				ref={this.bubblesRef}
-				className="bubbles"
-				width={'100%'}
-				height={height}
-			>
-				<g
-					ref={this.onBubblesGroupRef}
-					className="bubbles__group"
-					style={{
-            transform: `translate(${padding.top}px, ${padding.left}px)`,
-          }}
-				/>
-			</svg>
+			// <svg
+			// 	ref={this.bubblesRef}
+			// 	className="bubbles"
+			// 	width={'100%'}
+			// 	height={height}
+			// >
+			<g
+				ref={this.onBubblesGroupRef}
+				className="bubbles__group"
+				style={{
+          transform: `translate(${padding.top}px, ${padding.left}px)`,
+        }}
+			/>
+			// </svg>
 		);
 	}
 }
@@ -430,7 +434,7 @@ Bubbles.propTypes = {
 	}),
 	forceStrength: PropTypes.number.isRequired,
 	velocityDecay: PropTypes.number,
-	width: PropTypes.number,
+	width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	height: PropTypes.number,
 	padding: PropTypes.shape({
 		top: PropTypes.number,
@@ -445,34 +449,3 @@ Bubbles.propTypes = {
 	onBubbleMouseover: PropTypes.func,
 	onBubbleMouseout: PropTypes.func,
 };
-
-/*
-* Function called on mouseover to display the
-* details of a bubble in the tooltip.
-*/
-export function showDetail(d) {
-	// change outline to indicate hover state.
-	d3.select(this).attr('stroke', 'black');
-
-	console.log(d.country, d);
-
-	// const content =
-	// 	`<span class="name">Title: </span><span class="value">${
-	// 		d.name
-	// 	}</span><br/>` +
-	// 	`<span class="name">Amount: </span><span class="value">$${
-	// 		d.value
-	// 	}</span><br/>` +
-	// 	`<span class="name">Year: </span><span class="value">${d.year}</span>`;
-
-	// tooltip.showTooltip(content, d3.event);
-}
-
-/*
-* Hides tooltip
-*/
-export function hideDetail() {
-	// reset outline
-	// d3.select(this).attr('stroke', d3.rgb(fillColor(d.group)).darker());
-	// tooltip.hideTooltip();
-}

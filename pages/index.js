@@ -1,12 +1,15 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import Router from 'next/router';
 import * as d3 from 'd3';
+import { VictoryAxis } from 'victory';
 
 import App from '../components/App';
 import Bubbles from '../components/Bubbles';
+import BubbleChart from '../components/BubbleChart';
 import Tooltip from '../components/Tooltip';
 import { indicators, continents } from '../lib/data';
 import { processData } from '../lib/dataUtils';
+import victoryTheme from '../lib/victoryTheme';
 
 import './index.css';
 
@@ -66,41 +69,124 @@ export class HomePage extends Component {
 			typeof router.query.y === 'undefined' ? 1 : parseInt(router.query.y, 10);
 		const xName = indicators[x].name;
 		const yName = indicators[y].name;
+		const xDomain = d3.extent(data, (d) => {
+			return d[xName];
+		});
+		const yDomain = d3.extent(data, (d) => {
+			return d[yName];
+		});
 
 		return (
 			<App title="Home" url={router.pathname}>
-				<Bubbles
-					xName={xName}
-					yName={yName}
-					data={data}
-					width={800}
-					height={500}
-					bubbleFill={(d) => {
-						const continent = continents.find((c) => c.name === d.continent);
+				<BubbleChart>
+					{(width, height) => {
+						return (
+							<Fragment>
+								<Bubbles
+									xName={xName}
+									yName={yName}
+									data={data}
+									width={width}
+									height={height}
+									bubbleFill={(d) => {
+										const continent = continents.find(
+											(c) => c.name === d.continent,
+										);
 
-						return continent ? continent.colour : null;
-					}}
-					bubbleOpacity={0.75}
-					onBubbleMouseover={(event, d, i) => {
-						console.log(event, d, i);
+										return continent ? continent.colour : null;
+									}}
+									bubbleOpacity={0.75}
+									onBubbleMouseover={(event, d) => {
+										// console.log(event, d, i);
 
-						this.setState({
-							showTooltip: true,
-							tooltipX: event.clientX,
-							tooltipY: event.clientY,
-							tooltipContent: d.country,
-						});
+										this.setState({
+											showTooltip: true,
+											tooltipX: event.clientX,
+											tooltipY: event.clientY,
+											tooltipContent: d.country,
+										});
+									}}
+									onBubbleMouseout={() => {
+										// console.log(event, d, i);
+										this.setState({
+											showTooltip: false,
+											tooltipX: null,
+											tooltipY: null,
+											tooltipContent: null,
+										});
+									}}
+								/>
+
+								{xDomain &&
+									xDomain[0] && (
+										<VictoryAxis
+											label={xName}
+											width={width}
+											height={height}
+											domain={xDomain}
+											// style={{
+											//   axislabel: {
+											//     fontFamily: 'Inter UI',
+											//     padding: 35,
+											//     fontSize: '12px',
+											//     width:width,
+											//   },
+
+											//   ticks: {
+											//     stroke: 'black',
+											//     size: 5,
+											//   },
+
+											//   ticklabels: {
+											//     fontSize: '12px',
+											//     fontFamily: 'Inter UI',
+											//   },
+											// }}
+											theme={victoryTheme}
+											offsetY={50}
+											fixLabelOverlap
+											standalone={false}
+										/>
+									)}
+
+								{yDomain &&
+									yDomain[0] && (
+										<VictoryAxis
+											dependentAxis
+											label={yName}
+											width={width}
+											height={height}
+											domain={yDomain}
+											// style={{
+											//   axislabel: {
+											//     fontFamily: 'Inter UI',
+											//     padding: 35,
+											//     fontSize: '12px',
+											//     width:width,
+											//   },
+
+											//   ticks: {
+											//     stroke: 'black',
+											//     size: 5,
+											//   },
+
+											//   ticklabels: {
+											//     fontSize: '12px',
+											//     fontFamily: 'Inter UI',
+											//     angle: -90,
+											//     textAnchor: 'middle',
+											//   },
+											// }}
+											theme={victoryTheme}
+											offsetX={50}
+											fixLabelOverlap
+											standalone={false}
+										/>
+									)}
+							</Fragment>
+						);
 					}}
-					onBubbleMouseout={(event, d, i) => {
-						console.log(event, d, i);
-						this.setState({
-							showTooltip: false,
-							tooltipX: null,
-							tooltipY: null,
-							tooltipContent: null,
-						});
-					}}
-				/>
+				</BubbleChart>
 
 				<h2>X</h2>
 				<select

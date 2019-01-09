@@ -21,14 +21,13 @@ export default class Bubbles extends React.Component {
 		height: 500,
 		xName: null,
 		yName: null,
+		selectedId: null,
 	};
 
 	state = {
 		g: null,
 		xScale: null,
 		yScale: null,
-		// xAxis: null,
-		// yAxis: null,
 		width: null,
 		height: null,
 		clickedId: null,
@@ -69,6 +68,7 @@ export default class Bubbles extends React.Component {
 			console.log('data change');
 
 			this.init(this.props.data);
+			this.regroupBubbles();
 		}
 
 		if (
@@ -77,12 +77,36 @@ export default class Bubbles extends React.Component {
 		) {
 			console.log('xName/yName change');
 
+			this.setupBubbles(
+				this.props.data,
+				this.props.xName,
+				this.props.yName,
+				this.props.selectedId,
+			);
 			this.regroupBubbles();
 		}
 
 		if (prevProps.width !== this.props.width) {
 			console.log('width change', this.props.width);
+			console.log('selectedId change', this.props.selectedId);
 
+			this.setupBubbles(
+				this.props.data,
+				this.props.xName,
+				this.props.yName,
+				this.props.selectedId,
+			);
+			this.regroupBubbles();
+		}
+
+		if (prevProps.selectedId !== this.props.selectedId) {
+			console.log('selectedId change', this.props.selectedId);
+			this.setupBubbles(
+				this.props.data,
+				this.props.xName,
+				this.props.yName,
+				this.props.selectedId,
+			);
 			this.regroupBubbles();
 		}
 	}
@@ -98,13 +122,17 @@ export default class Bubbles extends React.Component {
 		});
 	};
 
+	/** Initialise bubbles */
 	init = (data) => {
-		const { xName, yName, padding } = this.props;
-		const { width, height } = this.getInnerSize(
-			this.props.width,
-			this.props.height,
-			padding,
-		);
+		const { xName, yName, selectedId } = this.props;
+
+		this.setupBubbles(data, xName, yName, selectedId);
+		this.regroupBubbles();
+	};
+
+	/** Set up bubbles data and enter/exit events */
+	setupBubbles = (data, xName, yName, selectedId = null) => {
+		console.log('setupBubbles', selectedId);
 
 		// Create selection
 		const bubbles = this.state.g.selectAll('.bubble').data(data, (d) => d.id);
@@ -130,7 +158,8 @@ export default class Bubbles extends React.Component {
 			.on('click', (d, i) => {
 				this.handleBubbleClick(d, i);
 				// d3.select(this).attr('r', 20);
-			}); // eslint-disable-line
+			})
+			.merge(bubbles); // eslint-disable-line
 
 		bubblesE
 			.transition()
@@ -138,6 +167,12 @@ export default class Bubbles extends React.Component {
 			.attr('r', (d) => {
 				if (!d[xName] || !d[yName]) {
 					return 0;
+				}
+
+				// console.log(d, selectedId);
+
+				if (d.id === selectedId) {
+					return 20;
 				}
 
 				return d.radius;
@@ -148,47 +183,10 @@ export default class Bubbles extends React.Component {
 					.alpha(1)
 					.restart();
 			});
-
-		const { xScale, yScale } = this.getScales(width, height);
-
-		this.setState(
-			{
-				xScale,
-				yScale,
-			},
-			() => {
-				this.regroupBubbles();
-			},
-		);
-	};
-
-	// setBubbles = () => {
-
-	// }
-
-	/** Return d3 scale functions based on width and height */
-	getScales = (width, height) => {
-		return {
-			xScale: d3.scaleLinear().range([0, width]),
-			yScale: d3.scaleLinear().range([height, 0]),
-		};
-	};
-
-	/** Work out bubble chart dimensions taking padding into account */
-	getInnerSize = (
-		width = 800,
-		height = 500,
-		padding = { top: 0, right: 0, bottom: 0, left: 0 },
-	) => {
-		return {
-			width: width - padding.right - padding.left,
-			height: height - padding.top - padding.bottom,
-		};
 	};
 
 	regroupBubbles = () => {
 		const { forceStrength, data, xName, yName, padding } = this.props;
-		// const { xAxis, yAxis } = this.state;
 		const { width, height } = this.getInnerSize(
 			this.props.width,
 			this.props.height,
@@ -228,6 +226,18 @@ export default class Bubbles extends React.Component {
 		this.simulation.alpha(1).restart();
 	};
 
+	// --------------------------------------------------------------------------
+	// Scale Functions
+	// --------------------------------------------------------------------------
+
+	/** Return d3 scale functions based on width and height */
+	getScales = (width, height) => {
+		return {
+			xScale: d3.scaleLinear().range([0, width]),
+			yScale: d3.scaleLinear().range([height, 0]),
+		};
+	};
+
 	/**
 	 * Update scale domain ranges
 	 *
@@ -258,16 +268,25 @@ export default class Bubbles extends React.Component {
 		}
 	};
 
-	/** Set bubble fill colour */
-	bubbleFill = (d) => {
-		if (typeof this.props.bubbleFill === 'function') {
-			return this.props.bubbleFill(d);
-		}
+	// --------------------------------------------------------------------------
+	// Utility Functions
+	// --------------------------------------------------------------------------
 
-		if (typeof this.props.bubbleFill === 'string') {
-			return this.props.bubbleFill;
-		}
+	/** Work out bubble chart dimensions taking padding into account */
+	getInnerSize = (
+		width = 800,
+		height = 500,
+		padding = { top: 0, right: 0, bottom: 0, left: 0 },
+	) => {
+		return {
+			width: width - padding.right - padding.left,
+			height: height - padding.top - padding.bottom,
+		};
 	};
+
+	// --------------------------------------------------------------------------
+	// Force Functions
+	// --------------------------------------------------------------------------
 
 	ticked() {
 		this.state.g.selectAll('.bubble').attr('transform', (d) => {
@@ -281,6 +300,21 @@ export default class Bubbles extends React.Component {
 		return -this.props.forceStrength * d.radius ** 2.0;
 	}
 
+	// --------------------------------------------------------------------------
+	// Bubble Appearance
+	// --------------------------------------------------------------------------
+
+	/** Set bubble fill colour */
+	bubbleFill = (d) => {
+		if (typeof this.props.bubbleFill === 'function') {
+			return this.props.bubbleFill(d);
+		}
+
+		if (typeof this.props.bubbleFill === 'string') {
+			return this.props.bubbleFill;
+		}
+	};
+
 	/** Set bubble opacity */
 	bubbleOpacity = (d) => {
 		if (typeof this.props.bubbleOpacity === 'function') {
@@ -291,6 +325,10 @@ export default class Bubbles extends React.Component {
 			return this.props.bubbleOpacity;
 		}
 	};
+
+	// --------------------------------------------------------------------------
+	// Event Handlers
+	// --------------------------------------------------------------------------
 
 	handleBubbleMouseover = (d, i) => {
 		if (typeof this.props.onBubbleMouseover === 'function') {
@@ -310,12 +348,12 @@ export default class Bubbles extends React.Component {
 		}
 
 		// WIP
-		d3.selectAll('.bubble').attr('r', (d) => d.radius);
-		d3.selectAll(`[id=${d.id}]`).attr('r', 20);
+		// d3.selectAll('.bubble').attr('r', (_d) => _d.radius);
+		// d3.selectAll(`[id=${d.id}]`).attr('r', 20);
 
-		this.setState({
-			clickedId: d.id,
-		});
+		// this.setState({
+		// 	clickedId: d.id,
+		// });
 	};
 
 	// shouldComponentUpdate() {

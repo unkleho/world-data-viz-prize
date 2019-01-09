@@ -48,23 +48,17 @@ export class HomePage extends Component {
 
 	handleSelectChange = (event, axis) => {
 		const { value } = event.target;
-		// console.log(this.props);
+		// let query;
 
-		if (axis === 'x') {
-			Router.push(
-				`/?x=${value}&y=${parseInt(
-					this.props.router.query.y || this.state.defaultX,
-					10,
-				)}`,
-			);
-		} else if (axis === 'y') {
-			Router.push(
-				`/?x=${parseInt(
-					this.props.router.query.x || this.state.defaultY,
-					10,
-				)}&y=${value}`,
-			);
-		}
+		const query = {
+			...this.props.router.query,
+			...(axis === 'x' ? { x: value } : {}),
+			...(axis === 'y' ? { y: value } : {}),
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
 	};
 
 	render() {
@@ -112,6 +106,7 @@ export class HomePage extends Component {
 										return continent ? continent.colour : null;
 									}}
 									bubbleOpacity={0.75}
+									selectedId={router.query.country}
 									onBubbleMouseover={(event, d) => {
 										// console.log(event, d, i);
 
@@ -141,24 +136,6 @@ export class HomePage extends Component {
 											width={width}
 											height={height}
 											domain={xDomain}
-											// style={{
-											//   axislabel: {
-											//     fontFamily: 'Inter UI',
-											//     padding: 35,
-											//     fontSize: '12px',
-											//     width:width,
-											//   },
-
-											//   ticks: {
-											//     stroke: 'black',
-											//     size: 5,
-											//   },
-
-											//   ticklabels: {
-											//     fontSize: '12px',
-											//     fontFamily: 'Inter UI',
-											//   },
-											// }}
 											theme={victoryTheme}
 											offsetY={50}
 											fixLabelOverlap

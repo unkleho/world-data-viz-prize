@@ -174,13 +174,12 @@ export class HomePage extends Component {
 											width={width}
 											height={height}
 											domain={yDomain}
-											/* stylelint-disable selector-type-no-unknown */
+											// NOTE: Stylelint don't like this, so this file has been ignored
 											style={{
-												ticklabels: {
+												tickLabels: {
 													angle: -90,
 												},
 											}}
-											/* stylelint-enable */
 											theme={victoryTheme}
 											offsetX={50}
 											fixLabelOverlap

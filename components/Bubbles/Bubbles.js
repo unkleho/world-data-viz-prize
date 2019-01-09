@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
-// import { fillColor } from '../utils'
-// import tooltip from './Tooltip'
 
 export default class Bubbles extends React.Component {
 	static defaultProps = {
@@ -18,7 +16,7 @@ export default class Bubbles extends React.Component {
 			left: 50,
 		},
 		forceStrength: 0.02,
-		groupByYear: true,
+		velocityDecay: 0.2,
 		width: 800,
 		height: 500,
 		xName: null,
@@ -31,16 +29,18 @@ export default class Bubbles extends React.Component {
 		yScale: null,
 		xAxis: null,
 		yAxis: null,
+		width: null,
+		height: null,
 	};
 
 	constructor(props) {
 		super(props);
 
-		const { forceStrength, center } = props;
+		const { forceStrength, velocityDecay, center } = props;
 
 		this.simulation = d3
 			.forceSimulation()
-			.velocityDecay(0.2)
+			.velocityDecay(velocityDecay)
 			.force(
 				'x',
 				d3
@@ -58,9 +58,16 @@ export default class Bubbles extends React.Component {
 			// .force('charge', d3.forceManyBody().strength(this.charge.bind(this)))
 			.on('tick', this.ticked.bind(this))
 			.stop();
+
+		this.bubblesRef = React.createRef();
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidMount() {
+		window.addEventListener('resize', this.updateDimensions);
+		this.updateDimensions();
+	}
+
+	componentDidUpdate(prevProps, prevState) {
 		if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
 			console.log('data change');
 
@@ -75,20 +82,37 @@ export default class Bubbles extends React.Component {
 
 			this.regroupBubbles();
 		}
+
+		if (prevState.width !== this.state.width) {
+			console.log('width change', this.state.width);
+
+			this.regroupBubbles();
+		}
 	}
 
-	onRef = (ref) => {
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.updateDimensions);
+	}
+
+	/** Update width and height values of svg wrapper in state */
+	updateDimensions = () => {
+		this.setState({
+			width: this.bubblesRef.current.clientWidth,
+			height: this.bubblesRef.current.clientHeight,
+		});
+	};
+
+	onBubblesGroupRef = (ref) => {
 		this.setState({ g: d3.select(ref) }, () => {
 			this.init(this.props.data);
 		});
 	};
 
 	init(data) {
-		console.log('init()');
 		const { xName, yName, padding } = this.props;
 		const { width, height } = this.getInnerSize(
-			this.props.width,
-			this.props.height,
+			this.state.width,
+			this.state.height,
 			padding,
 		);
 
@@ -106,7 +130,8 @@ export default class Bubbles extends React.Component {
 			.attr('r', 0)
 			.attr('cx', (d) => d.x)
 			.attr('cy', (d) => d.y)
-			// .attr('fill', (d) => fillColor(d.group))
+			.attr('fill', this.bubbleFill)
+			.attr('opacity', this.bubbleOpacity)
 			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
 			// .attr('stroke-width', 2)
 			.on('mouseover', this.handleBubbleMouseover) // eslint-disable-line
@@ -130,10 +155,10 @@ export default class Bubbles extends React.Component {
 			});
 
 		// Axis
-		const xScale = d3.scaleLinear().range([0, width]);
-		const yScale = d3.scaleLinear().range([height, 0]);
-		const xAxis = d3.axisBottom(xScale);
-		const yAxis = d3.axisLeft(yScale);
+		const { xScale, yScale } = this.getScales(width, height);
+		const { xAxis, yAxis } = this.getAxes(xScale, yScale);
+		// const xAxis = d3.axisBottom(xScale);
+		// const yAxis = d3.axisLeft(yScale);
 
 		this.setState(
 			{
@@ -157,6 +182,22 @@ export default class Bubbles extends React.Component {
 		);
 	}
 
+	/** Return d3 scale functions based on width and height */
+	getScales = (width, height) => {
+		return {
+			xScale: d3.scaleLinear().range([0, width]),
+			yScale: d3.scaleLinear().range([height, 0]),
+		};
+	};
+
+	getAxes = (xScale, yScale) => {
+		return {
+			xAxis: d3.axisBottom(xScale),
+			yAxis: d3.axisLeft(yScale),
+		};
+	};
+
+	/** Work out bubble chart dimensions taking padding into account */
 	getInnerSize = (
 		width = 800,
 		height = 500,
@@ -207,23 +248,26 @@ export default class Bubbles extends React.Component {
 	};
 
 	regroupBubbles = () => {
-		console.log('regroup bubbles');
-
-		const { forceStrength, data, xName, yName } = this.props;
-		const { xScale, yScale, xAxis, yAxis } = this.state;
+		const { forceStrength, data, xName, yName, padding } = this.props;
+		const { xAxis, yAxis } = this.state;
+		const { width, height } = this.getInnerSize(
+			this.state.width,
+			this.state.height,
+			padding,
+		);
 
 		// Update scales
-		this.updateScales(data, xName, yName);
+		const { xScale, yScale } = this.getScales(width, height);
+		this.updateScaleDomains(data, xScale, yScale, xName, yName);
 
 		// Update axes
-		this.updateAxes(xAxis, yAxis);
+		// const { xAxis, yAxis } = this.getAxes(xScale, yScale);
+		this.updateAxes(xAxis, yAxis, xScale, yScale);
 		this.updateAxisLabel(xName, 'x');
 		this.updateAxisLabel(yName, 'y');
 
 		// Update bubbles
 		this.state.g.selectAll('.bubble').attr('r', (d) => {
-			// console.log(d);
-
 			if (!d[xName] || !d[yName]) {
 				return 0;
 			}
@@ -251,38 +295,74 @@ export default class Bubbles extends React.Component {
 		this.simulation.alpha(1).restart();
 	};
 
-	updateScales = (data, xName, yName) => {
-		const { xScale, yScale } = this.state;
+	/**
+	 * Update scale domain ranges
+	 *
+	 * @param {array} data
+	 * @param {function} xScale
+	 * @param {function} yScale
+	 * @param {string} xName
+	 * @param {string} yName
+	 * @return {void}
+	 */
+	updateScaleDomains = (data, xScale, yScale, xName, yName) => {
+		if (xScale && yScale) {
+			xScale
+				.domain(
+					d3.extent(data, (d) => {
+						return d[xName];
+					}),
+				)
+				.nice();
 
-		xScale
-			.domain(
-				d3.extent(data, (d) => {
-					return d[xName];
-				}),
-			)
-			.nice();
-
-		yScale
-			.domain(
-				d3.extent(data, (d) => {
-					return d[yName];
-				}),
-			)
-			.nice();
+			yScale
+				.domain(
+					d3.extent(data, (d) => {
+						return d[yName];
+					}),
+				)
+				.nice();
+		}
 	};
 
-	updateAxes = (xAxis, yAxis) => {
-		d3
-			.selectAll('.x')
-			.transition()
-			.duration(1000)
-			.call(xAxis);
+	updateAxes = (xAxis, yAxis, xScale, yScale) => {
+		if (xAxis && yAxis) {
+			d3
+				.selectAll('.x')
+				.transition()
+				.duration(1000)
+				.call(xScale)
+				.call(xAxis);
 
-		d3
-			.selectAll('.y')
-			.transition()
-			.duration(1000)
-			.call(yAxis);
+			d3
+				.selectAll('.y')
+				.transition()
+				.duration(1000)
+				.call(yScale)
+				.call(yAxis);
+		}
+	};
+
+	/** Set bubble fill colour */
+	bubbleFill = (d) => {
+		if (typeof this.props.bubbleFill === 'function') {
+			return this.props.bubbleFill(d);
+		}
+
+		if (typeof this.props.bubbleFill === 'string') {
+			return this.props.bubbleFill;
+		}
+	};
+
+	/** Set bubble opacity */
+	bubbleOpacity = (d) => {
+		if (typeof this.props.bubbleOpacity === 'function') {
+			return this.props.bubbleOpacity(d);
+		}
+
+		if (typeof this.props.bubbleOpacity === 'number') {
+			return this.props.bubbleOpacity;
+		}
 	};
 
 	handleBubbleMouseover = (d, i) => {
@@ -316,16 +396,21 @@ export default class Bubbles extends React.Component {
 	// }
 
 	render() {
-		const { width, height, padding } = this.props;
+		const { height, padding } = this.props;
 
 		return (
-			<svg className="bubbles" width={width} height={height}>
+			<svg
+				ref={this.bubblesRef}
+				className="bubbles"
+				width={'100%'}
+				height={height}
+			>
 				<g
-					ref={this.onRef}
+					ref={this.onBubblesGroupRef}
 					className="bubbles__group"
 					style={{
-						transform: `translate(${padding.top}px, ${padding.left}px)`,
-					}}
+            transform: `translate(${padding.top}px, ${padding.left}px)`,
+          }}
 				/>
 			</svg>
 		);
@@ -335,7 +420,6 @@ export default class Bubbles extends React.Component {
 Bubbles.propTypes = {
 	data: PropTypes.arrayOf(
 		PropTypes.shape({
-			x: PropTypes.number.isRequired,
 			id: PropTypes.string.isRequired,
 			radius: PropTypes.number.isRequired,
 		}),
@@ -345,10 +429,19 @@ Bubbles.propTypes = {
 		y: PropTypes.number.isRequired,
 	}),
 	forceStrength: PropTypes.number.isRequired,
+	velocityDecay: PropTypes.number,
 	width: PropTypes.number,
 	height: PropTypes.number,
+	padding: PropTypes.shape({
+		top: PropTypes.number,
+		right: PropTypes.number,
+		bottom: PropTypes.number,
+		left: PropTypes.number,
+	}),
 	xName: PropTypes.string,
 	yName: PropTypes.string,
+	bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+	bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
 	onBubbleMouseover: PropTypes.func,
 	onBubbleMouseout: PropTypes.func,
 };

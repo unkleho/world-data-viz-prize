@@ -1,5 +1,12 @@
 @import 'normalize.css/normalize.css';
 
+@import url('https://rsms.me/inter/inter-ui.css');
+@supports (font-variation-settings: normal) {
+  html {
+    font-family: 'Inter UI var alt', sans-serif;
+  }
+}
+
 /*
  * BASE STYLES
  * ========================================================================== */
@@ -15,7 +22,7 @@ html {
 }
 
 * {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Inter UI', sans-serif;
 }
 
 body {

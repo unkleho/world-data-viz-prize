@@ -1,0 +1,19 @@
+@import '../../styles/variables.css';
+
+.legend {
+  display: flex;
+  font-size: var(--font-size-sm);
+}
+
+.legend__item {
+  display: flex;
+  margin-right: 1rem;
+}
+
+.legend__symbol {
+  width: 1em;
+  height: 1em;
+  margin-right: var(--spacing-xxs);
+  background-color: red;
+  border-radius: 1em;
+}

@@ -7,6 +7,7 @@ import App from '../components/App';
 import Bubbles from '../components/Bubbles';
 import BubbleChart from '../components/BubbleChart';
 import Tooltip from '../components/Tooltip';
+import Legend from '../components/Legend';
 import { indicators, continents } from '../lib/data';
 import { processData } from '../lib/dataUtils';
 import victoryTheme from '../lib/victoryTheme';
@@ -78,6 +79,8 @@ export class HomePage extends Component {
 
 		return (
 			<App title="Home" url={router.pathname}>
+				<Legend data={continents} />
+
 				<BubbleChart>
 					{(width, height) => {
 						return (

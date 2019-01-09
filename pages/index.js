@@ -174,26 +174,13 @@ export class HomePage extends Component {
 											width={width}
 											height={height}
 											domain={yDomain}
-											// style={{
-											//   axislabel: {
-											//     fontFamily: 'Inter UI',
-											//     padding: 35,
-											//     fontSize: '12px',
-											//     width:width,
-											//   },
-
-											//   ticks: {
-											//     stroke: 'black',
-											//     size: 5,
-											//   },
-
-											//   ticklabels: {
-											//     fontSize: '12px',
-											//     fontFamily: 'Inter UI',
-											//     angle: -90,
-											//     textAnchor: 'middle',
-											//   },
-											// }}
+											/* stylelint-disable selector-type-no-unknown */
+											style={{
+												ticklabels: {
+													angle: -90,
+												},
+											}}
+											/* stylelint-enable */
 											theme={victoryTheme}
 											offsetX={50}
 											fixLabelOverlap

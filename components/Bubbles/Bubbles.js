@@ -68,7 +68,7 @@ export default class Bubbles extends React.Component {
 			console.log('data change');
 
 			this.init(this.props.data);
-			this.regroupBubbles();
+			// this.regroupBubbles();
 		}
 
 		if (

@@ -1,18 +1,16 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import Router from 'next/router';
 import * as d3 from 'd3';
-import { VictoryAxis } from 'victory';
 import queryString from 'query-string';
 
 import App from '../components/App';
-import Bubbles from '../components/Bubbles';
 import BubbleChart from '../components/BubbleChart';
 import Tooltip from '../components/Tooltip';
 import Legend from '../components/Legend';
 import InfoCard from '../components/InfoCard';
+import IndicatorsSelectorBox from '../components/IndicatorsSelectorBox';
 import { indicators, continents } from '../lib/data';
 import { processData } from '../lib/dataUtils';
-import victoryTheme from '../lib/victoryTheme';
 
 import './index.css';
 
@@ -48,7 +46,6 @@ export class HomePage extends Component {
 
 	handleSelectChange = (event, axis) => {
 		const { value } = event.target;
-		// let query;
 
 		const query = {
 			...this.props.router.query,
@@ -77,132 +74,55 @@ export class HomePage extends Component {
 			typeof router.query.y === 'undefined' ? 1 : parseInt(router.query.y, 10);
 		const xName = indicators[x].name;
 		const yName = indicators[y].name;
-		const xDomain = d3.extent(data, (d) => {
-			return d[xName];
-		});
-		const yDomain = d3.extent(data, (d) => {
-			return d[yName];
-		});
 
 		return (
 			<App title="Home" url={router.pathname}>
 				<Legend data={continents} />
 
-				<BubbleChart>
-					{(width, height) => {
-						return (
-							<Fragment>
-								<Bubbles
-									xName={xName}
-									yName={yName}
-									data={data}
-									width={width}
-									height={height}
-									bubbleFill={(d) => {
-										const continent = continents.find(
-											(c) => c.name === d.continent,
-										);
+				<BubbleChart
+					data={data}
+					xName={xName}
+					yName={yName}
+					selectedId={router.query.country}
+					bubbleFill={(d) => {
+						const continent = continents.find((c) => c.name === d.continent);
 
-										return continent ? continent.colour : null;
-									}}
-									bubbleOpacity={0.75}
-									selectedId={router.query.country}
-									onBubbleMouseover={(event, d) => {
-										// console.log(event, d, i);
-
-										this.setState({
-											showTooltip: true,
-											tooltipX: event.clientX,
-											tooltipY: event.clientY,
-											tooltipContent: d.country,
-										});
-									}}
-									onBubbleMouseout={() => {
-										// console.log(event, d, i);
-										this.setState({
-											showTooltip: false,
-											tooltipX: null,
-											tooltipY: null,
-											tooltipContent: null,
-										});
-									}}
-									onBubbleClick={this.handleBubbleClick}
-								/>
-
-								{xDomain &&
-									xDomain[0] && (
-										<VictoryAxis
-											label={xName}
-											width={width}
-											height={height}
-											domain={xDomain}
-											theme={victoryTheme}
-											offsetY={50}
-											fixLabelOverlap
-											standalone={false}
-										/>
-									)}
-
-								{yDomain &&
-									yDomain[0] && (
-										<VictoryAxis
-											dependentAxis
-											label={yName}
-											width={width}
-											height={height}
-											domain={yDomain}
-											// NOTE: Stylelint don't like this, so this file has been ignored
-											style={{
-												tickLabels: {
-													angle: -90,
-												},
-											}}
-											theme={victoryTheme}
-											offsetX={50}
-											fixLabelOverlap
-											standalone={false}
-										/>
-									)}
-							</Fragment>
-						);
+						return continent ? continent.colour : null;
 					}}
-				</BubbleChart>
+					onBubbleMouseover={(event, d) => {
+						this.setState({
+							showTooltip: true,
+							tooltipX: event.clientX,
+							tooltipY: event.clientY,
+							tooltipContent: d.country,
+						});
+					}}
+					onBubbleMouseout={() => {
+						this.setState({
+							showTooltip: false,
+							tooltipX: null,
+							tooltipY: null,
+							tooltipContent: null,
+						});
+					}}
+					onBubbleClick={this.handleBubbleClick}
+				/>
 
-				<h2>X</h2>
-				<select
-					onChange={(event) => this.handleSelectChange(event, 'x')}
+				<IndicatorsSelectorBox
+					title="X"
+					indicators={indicators}
 					value={x}
-				>
-					{indicators.map((indicator, i) => {
-						return (
-							<option
-								name={indicator.name}
-								value={i}
-								key={`x-${indicator.name}`}
-							>
-								{indicator.name}
-							</option>
-						);
-					})}
-				</select>
+					axis="x"
+					onChange={this.handleSelectChange}
+				/>
 
-				<h2>Y</h2>
-				<select
-					onChange={(event) => this.handleSelectChange(event, 'y')}
+				<IndicatorsSelectorBox
+					title="Y"
+					indicators={indicators}
 					value={y}
-				>
-					{indicators.map((indicator, i) => {
-						return (
-							<option
-								name={indicator.name}
-								value={i}
-								key={`y-${indicator.name}`}
-							>
-								{indicator.name}
-							</option>
-						);
-					})}
-				</select>
+					axis="y"
+					onChange={this.handleSelectChange}
+				/>
 
 				{showTooltip && (
 					<Tooltip x={tooltipX} y={tooltipY - 30}>

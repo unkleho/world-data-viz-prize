@@ -1,53 +1,107 @@
-import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import * as d3 from 'd3';
+import { VictoryAxis } from 'victory';
 
+import Bubbles from '../Bubbles';
+import BubbleChartWrapper from '../BubbleChartWrapper';
+import victoryTheme from '../../lib/victoryTheme';
 import './BubbleChart.css';
 
 class BubbleChart extends Component {
-	// static propTypes = {};
-
-	state = {
-		width: null,
-		height: null,
+	static propTypes = {
+		data: PropTypes.array,
+		xName: PropTypes.string,
+		yName: PropTypes.string,
+		selectedId: PropTypes.string,
+		bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+		bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+		onBubbleMouseover: PropTypes.func,
+		onBubbleMouseout: PropTypes.func,
+		onBubbleClick: PropTypes.func,
 	};
 
-	constructor(props) {
-		super(props);
-
-		this.bubbleChartRef = React.createRef();
-	}
-
-	componentDidMount() {
-		window.addEventListener('resize', this.updateDimensions);
-
-		this.updateDimensions();
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('resize', this.updateDimensions);
-	}
-
-	/** Update width and height values of svg wrapper in state */
-	updateDimensions = () => {
-		this.setState({
-			width: this.bubbleChartRef.current.clientWidth,
-			height: this.bubbleChartRef.current.clientHeight,
-		});
+	static defaultProps = {
+		data: [],
 	};
 
 	render() {
-		const { children } = this.props;
-		const { width, height } = this.state;
+		const {
+			data,
+			xName,
+			yName,
+			selectedId,
+			bubbleFill,
+			onBubbleMouseover,
+			onBubbleMouseout,
+			onBubbleClick,
+		} = this.props;
+		const xDomain = d3.extent(data, (d) => {
+			return d[xName];
+		});
+		const yDomain = d3.extent(data, (d) => {
+			return d[yName];
+		});
 
 		return (
-			<svg
-				ref={this.bubbleChartRef}
-				className="bubble-chart"
-				width={'100%'}
-				height={500}
-			>
-				{children(width, height)}
-			</svg>
+			<div className="bubble-chart">
+				<BubbleChartWrapper>
+					{(width, height) => {
+						return (
+							<Fragment>
+								<Bubbles
+									data={data}
+									xName={xName}
+									yName={yName}
+									width={width}
+									height={height}
+									bubbleFill={bubbleFill}
+									bubbleOpacity={0.75}
+									selectedId={selectedId}
+									onBubbleMouseover={onBubbleMouseover}
+									onBubbleMouseout={onBubbleMouseout}
+									onBubbleClick={onBubbleClick}
+								/>
+
+								{xDomain &&
+									xDomain[0] && (
+										<VictoryAxis
+											label={xName}
+											width={width}
+											height={height}
+											domain={xDomain}
+											theme={victoryTheme}
+											offsetY={50}
+											fixLabelOverlap
+											standalone={false}
+										/>
+									)}
+
+								{yDomain &&
+									yDomain[0] && (
+										<VictoryAxis
+											dependentAxis
+											label={yName}
+											width={width}
+											height={height}
+											domain={yDomain}
+											// NOTE: Stylelint don't like this, so this file has been ignored
+											style={{
+                        ticklabels: {
+                          angle: -90,
+                        },
+                      }}
+											theme={victoryTheme}
+											offsetX={50}
+											fixLabelOverlap
+											standalone={false}
+										/>
+									)}
+							</Fragment>
+						);
+					}}
+				</BubbleChartWrapper>
+			</div>
 		);
 	}
 }

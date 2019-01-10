@@ -7,7 +7,7 @@ import App from '../components/App';
 import BubbleChart from '../components/BubbleChart';
 import Tooltip from '../components/Tooltip';
 import Legend from '../components/Legend';
-import InfoCard from '../components/InfoCard';
+import CountryCard from '../components/CountryCard';
 import IndicatorsSelectorBox from '../components/IndicatorsSelectorBox';
 import { indicators, continents } from '../lib/data';
 import { processData } from '../lib/dataUtils';
@@ -77,16 +77,23 @@ export class HomePage extends Component {
 
 		return (
 			<App title="Home" url={router.pathname}>
+				<h1 className="home-page__title">World Data Viz Prize</h1>
+
 				<Legend data={continents} />
 
 				<BubbleChart
 					data={data}
 					xName={xName}
 					yName={yName}
+					padding={{
+						top: 32,
+						right: 16,
+						bottom: 48,
+						left: 48,
+					}}
 					selectedId={router.query.country}
 					bubbleFill={(d) => {
 						const continent = continents.find((c) => c.name === d.continent);
-
 						return continent ? continent.colour : null;
 					}}
 					onBubbleMouseover={(event, d) => {
@@ -130,7 +137,9 @@ export class HomePage extends Component {
 					</Tooltip>
 				)}
 
-				<InfoCard country={data.find((d) => d.id === router.query.country)} />
+				<CountryCard
+					country={data.find((d) => d.id === router.query.country)}
+				/>
 			</App>
 		);
 	}

@@ -169,8 +169,6 @@ export default class Bubbles extends React.Component {
 					return 0;
 				}
 
-				// console.log(d, selectedId);
-
 				if (d.id === selectedId) {
 					return 20;
 				}
@@ -346,14 +344,6 @@ export default class Bubbles extends React.Component {
 		if (typeof this.props.onBubbleClick === 'function') {
 			this.props.onBubbleClick(d3.event, d, i);
 		}
-
-		// WIP
-		// d3.selectAll('.bubble').attr('r', (_d) => _d.radius);
-		// d3.selectAll(`[id=${d.id}]`).attr('r', 20);
-
-		// this.setState({
-		// 	clickedId: d.id,
-		// });
 	};
 
 	// shouldComponentUpdate() {
@@ -370,7 +360,7 @@ export default class Bubbles extends React.Component {
 				ref={this.onBubblesGroupRef}
 				className="bubbles__group"
 				style={{
-					transform: `translate(${padding.top}px, ${padding.left}px)`,
+					transform: `translate(${padding.left}px, ${padding.top}px)`,
 				}}
 			/>
 		);

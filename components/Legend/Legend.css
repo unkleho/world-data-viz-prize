@@ -2,18 +2,25 @@
 
 .legend {
 	display: flex;
+	flex-wrap: wrap;
+
+	/* margin-bottom: var(--spacing-1); */
 	font-size: var(--font-size-sm);
+	line-height: var(--line-height-sm);
 }
 
 .legend__item {
 	display: flex;
-	margin-right: 1rem;
+	flex: 0 0 33%;
+	padding: 0.5rem 0.5rem 0.5rem 0;
+
+	/* margin-right: 1rem; */
 }
 
 .legend__symbol {
-	width: 1em;
-	height: 1em;
+	width: 1rem;
+	height: 1rem;
 	margin-right: var(--spacing-xxs);
 	background-color: red;
-	border-radius: 1em;
+	border-radius: 1rem;
 }

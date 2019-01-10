@@ -13,6 +13,7 @@ class BubbleChart extends Component {
 		data: PropTypes.array,
 		xName: PropTypes.string,
 		yName: PropTypes.string,
+		padding: PropTypes.object,
 		selectedId: PropTypes.string,
 		bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 		bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
@@ -30,6 +31,7 @@ class BubbleChart extends Component {
 			data,
 			xName,
 			yName,
+			padding,
 			selectedId,
 			bubbleFill,
 			onBubbleMouseover,
@@ -47,6 +49,8 @@ class BubbleChart extends Component {
 			<div className="bubble-chart">
 				<BubbleChartWrapper>
 					{(width, height) => {
+						console.log(width, height);
+
 						return (
 							<Fragment>
 								<Bubbles
@@ -55,6 +59,7 @@ class BubbleChart extends Component {
 									yName={yName}
 									width={width}
 									height={height}
+									padding={padding}
 									bubbleFill={bubbleFill}
 									bubbleOpacity={0.75}
 									selectedId={selectedId}
@@ -71,7 +76,8 @@ class BubbleChart extends Component {
 											height={height}
 											domain={xDomain}
 											theme={victoryTheme}
-											offsetY={50}
+											padding={padding}
+											offsetY={padding.bottom}
 											fixLabelOverlap
 											standalone={false}
 										/>
@@ -89,10 +95,13 @@ class BubbleChart extends Component {
 											style={{
 												tickLabels: {
 													angle: -90,
+													textAnchor: 'middle',
+													padding: 9,
 												},
 											}}
 											theme={victoryTheme}
-											offsetX={50}
+											padding={padding}
+											offsetX={padding.left}
 											fixLabelOverlap
 											standalone={false}
 										/>

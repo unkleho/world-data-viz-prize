@@ -1,5 +1,5 @@
-h1 {
-	& span {
-		color: red;
-	}
+.home-page__title {
+	font-size: var(--font-size-md);
+	line-height: var(--line-height-md);
+	margin-bottom: var(--spacing-1);
 }

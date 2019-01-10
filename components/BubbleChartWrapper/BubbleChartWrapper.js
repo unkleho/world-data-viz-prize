@@ -44,7 +44,7 @@ class BubbleChartWrapper extends Component {
 				ref={this.bubbleChartWrapperRef}
 				className="bubble-chart-wrapper"
 				width={'100%'}
-				height={500}
+				height={'100%'}
 			>
 				{children(width, height)}
 			</svg>

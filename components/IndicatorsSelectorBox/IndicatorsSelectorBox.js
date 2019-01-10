@@ -22,6 +22,8 @@ class IndicatorsSelectorBox extends Component {
 	render() {
 		const { className, title, value, axis, indicators } = this.props;
 
+		// console.log(indicators, value);
+
 		return (
 			<div className={['indicators-selector-box', className || ''].join(' ')}>
 				<h2>{title}</h2>
@@ -42,6 +44,28 @@ class IndicatorsSelectorBox extends Component {
 						);
 					})}
 				</select>
+
+				{indicators[value].notes && (
+					<div className="indicators-selector-box__notes">
+						<h3>Description</h3>
+						<p>{indicators[value].notes}</p>
+					</div>
+				)}
+
+				<div className="indicators-selector-box__source">
+					<h3>Source</h3>
+					<p>{indicators[value].source}</p>
+				</div>
+
+				<div className="indicators-selector-box__year">
+					<h3>Year</h3>
+					<p>{indicators[value]['data year']}</p>
+				</div>
+
+				<div className="indicators-selector-box__url">
+					<h3>URL</h3>
+					<p>{indicators[value].URL}</p>
+				</div>
 			</div>
 		);
 	}

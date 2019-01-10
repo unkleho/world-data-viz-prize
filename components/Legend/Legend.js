@@ -23,8 +23,8 @@ class Legend extends Component {
 							<div
 								className="legend__symbol"
 								style={{
-                  backgroundColor: d.colour,
-                }}
+									backgroundColor: d.colour,
+								}}
 							/>
 							{d.name}
 						</div>

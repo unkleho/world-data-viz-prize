@@ -2,9 +2,9 @@
 
 @import url('https://rsms.me/inter/inter-ui.css');
 @supports (font-variation-settings: normal) {
-  html {
-    font-family: 'Inter UI var alt', sans-serif;
-  }
+	html {
+		font-family: 'Inter UI var alt', sans-serif;
+	}
 }
 
 /*
@@ -12,21 +12,21 @@
  * ========================================================================== */
 
 html {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: inherit;
+	box-sizing: inherit;
 }
 
 * {
-  font-family: 'Inter UI', sans-serif;
+	font-family: 'Inter UI', sans-serif;
 }
 
 body {
-  margin: var(--spacing-3);
+	margin: var(--spacing-3);
 }
 
 h1,
@@ -35,32 +35,32 @@ h3,
 h4,
 h5,
 h6 {
-  margin-top: 0;
+	margin-top: 0;
 }
 
 h1 {
-  color: var(--colour-primary);
-  font-size: var(--font-size-xxlg);
-  line-height: var(--line-height-xxlg);
-  margin-bottom: var(--spacing-2);
+	color: var(--colour-primary);
+	font-size: var(--font-size-xxlg);
+	line-height: var(--line-height-xxlg);
+	margin-bottom: var(--spacing-2);
 }
 
 h2 {
-  font-size: var(--font-size-xlg);
-  line-height: var(--line-height-xlg);
-  margin-bottom: var(--spacing-1);
+	font-size: var(--font-size-xlg);
+	line-height: var(--line-height-xlg);
+	margin-bottom: var(--spacing-1);
 }
 
 h3 {
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-lg);
-  margin-bottom: var(--spacing-2);
+	font-size: var(--font-size-lg);
+	line-height: var(--line-height-lg);
+	margin-bottom: var(--spacing-2);
 }
 
 h4 {
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-md);
-  margin-bottom: var(--spacing-1);
+	font-size: var(--font-size-md);
+	line-height: var(--line-height-md);
+	margin-bottom: var(--spacing-1);
 }
 
 p,
@@ -72,12 +72,12 @@ pre,
 table,
 fieldset,
 hr {
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-md);
-  margin-top: 0;
-  margin-bottom: var(--spacing-2);
+	font-size: var(--font-size-md);
+	line-height: var(--line-height-md);
+	margin-top: 0;
+	margin-bottom: var(--spacing-2);
 }
 
 section {
-  margin-bottom: var(--spacing-2);
+	margin-bottom: var(--spacing-2);
 }

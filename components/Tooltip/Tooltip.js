@@ -16,10 +16,10 @@ class Tooltip extends Component {
 			<div
 				className="tooltip"
 				style={{
-          position: 'absolute',
-          top: y,
-          left: x,
-        }}
+					position: 'absolute',
+					top: y,
+					left: x,
+				}}
 			>
 				{children}
 			</div>

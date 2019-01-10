@@ -97,6 +97,11 @@
 		"waait": "^1.0.2"
 	},
 	"lint-staged": {
-		"*.{js,css}": ["stylelint **/*.css --fix", "git add", "npm test"]
+		"*.{js,css}": [
+			"eslint --fix",
+			"stylelint **/*.css --fix",
+			"git add",
+			"npm test"
+		]
 	}
 }

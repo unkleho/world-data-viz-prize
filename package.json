@@ -23,6 +23,7 @@
 		"url": "https://github.com/unkleho/next-starter-kit"
 	},
 	"dependencies": {
+		"@mdi/font": "^3.3.92",
 		"@zeit/next-css": "^1.0.1",
 		"apollo-cache-inmemory": "^1.3.8",
 		"apollo-client": "^2.4.8",

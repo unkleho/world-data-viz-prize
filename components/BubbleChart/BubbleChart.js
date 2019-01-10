@@ -10,6 +10,7 @@ import './BubbleChart.css';
 
 class BubbleChart extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		data: PropTypes.array,
 		xName: PropTypes.string,
 		yName: PropTypes.string,
@@ -28,6 +29,7 @@ class BubbleChart extends Component {
 
 	render() {
 		const {
+			className,
 			data,
 			xName,
 			yName,
@@ -46,7 +48,7 @@ class BubbleChart extends Component {
 		});
 
 		return (
-			<div className="bubble-chart">
+			<div className={['bubble-chart', className || ''].join(' ')}>
 				<BubbleChartWrapper>
 					{(width, height) => {
 						console.log(width, height);

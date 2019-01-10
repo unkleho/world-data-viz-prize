@@ -3,3 +3,7 @@
 	line-height: var(--line-height-md);
 	margin-bottom: var(--spacing-1);
 }
+
+.home-page__chart {
+	margin-bottom: var(--spacing-2);
+}

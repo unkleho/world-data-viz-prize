@@ -82,6 +82,7 @@ export class HomePage extends Component {
 				<Legend data={continents} />
 
 				<BubbleChart
+					className="home-page__chart"
 					data={data}
 					xName={xName}
 					yName={yName}

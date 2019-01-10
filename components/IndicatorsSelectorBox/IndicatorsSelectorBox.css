@@ -1,6 +1,8 @@
 @import '../../styles/variables.css';
 
 .indicators-selector-box {
+	display: flex;
+
 	& h3 {
 		font-size: var(--font-size-sm);
 		line-height: var(--line-height-sm);
@@ -12,6 +14,20 @@
 		line-height: var(--line-height-sm);
 		margin-bottom: var(--spacing-1);
 	}
+
+	& label {
+		width: 3rem;
+		text-align: center;
+
+		/* display: flex; */
+	}
+}
+
+.indicators-selector-box__select-group {
+	/* display: flex; */
+
+	/* align-items: baseline; */
+	width: 100%;
 }
 
 .indicators-selector-box__select {

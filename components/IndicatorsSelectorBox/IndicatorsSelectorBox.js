@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
+import Select from 'react-select';
 
 import './IndicatorsSelectorBox.css';
 
@@ -13,58 +14,67 @@ class IndicatorsSelectorBox extends Component {
 		onChange: PropTypes.func,
 	};
 
-	handleSelectChange = (event, axis) => {
+	handleSelectChange = (option, axis) => {
 		if (typeof this.props.onChange === 'function') {
-			this.props.onChange(event, axis);
+			this.props.onChange(option, axis);
 		}
 	};
 
 	render() {
 		const { className, title, value, axis, indicators } = this.props;
+		const options = indicators.map((indicator, i) => ({
+			label: indicator.name,
+			value: i,
+			type: indicator.type,
+		}));
 
-		// console.log(indicators, value);
+		// console.log(options);
 
 		return (
 			<div className={['indicators-selector-box', className || ''].join(' ')}>
 				<h2>{title}</h2>
 
-				<select
+				<Select
+					className="indicators-selector-box__select"
+					isSearchable={false}
+					value={options[value]}
+					options={[
+						'info',
+						'life',
+						'economy',
+						'government',
+						'health',
+						'education',
+					].map((group) => ({
+						label: group,
+						options: options.filter((o) => o.type === group),
+					}))}
 					onChange={(event) => this.handleSelectChange(event, axis)}
-					value={value}
-				>
-					{indicators.map((indicator, i) => {
-						return (
-							<option
-								name={indicator.name}
-								value={i}
-								key={`indicators-selector-box-${indicator.name}`}
+					// menuShouldScrollIntoView={true}
+					maxMenuHeight={200}
+				/>
+
+				<div className="indicators-selector-box__metadata">
+					{indicators[value].notes && (
+						<div className="indicators-selector-box__notes">
+							{/* <h3>Description</h3> */}
+							<p>{indicators[value].notes}</p>
+						</div>
+					)}
+
+					<div className="indicators-selector-box__source">
+						<h3>Source</h3>
+						<p>
+							<a
+								href={indicators[value].URL}
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								{indicator.name}
-							</option>
-						);
-					})}
-				</select>
-
-				{indicators[value].notes && (
-					<div className="indicators-selector-box__notes">
-						<h3>Description</h3>
-						<p>{indicators[value].notes}</p>
+								{indicators[value].source}
+							</a>{' '}
+							({indicators[value]['data year']})
+						</p>
 					</div>
-				)}
-
-				<div className="indicators-selector-box__source">
-					<h3>Source</h3>
-					<p>{indicators[value].source}</p>
-				</div>
-
-				<div className="indicators-selector-box__year">
-					<h3>Year</h3>
-					<p>{indicators[value]['data year']}</p>
-				</div>
-
-				<div className="indicators-selector-box__url">
-					<h3>URL</h3>
-					<p>{indicators[value].URL}</p>
 				</div>
 			</div>
 		);

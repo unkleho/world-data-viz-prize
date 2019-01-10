@@ -1,4 +1,37 @@
 @import '../../styles/variables.css';
 
-/* .indicators-selector-box {
+.indicators-selector-box {
+	& h3 {
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+		margin-bottom: var(--spacing-1);
+	}
+
+	& p {
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+		margin-bottom: var(--spacing-1);
+	}
+}
+
+.indicators-selector-box__select {
+	width: 100%;
+	margin-bottom: var(--spacing-1);
+}
+
+/* .indicators-selector-box__metadata { */
+
+/* display: flex; */
+
+/* } */
+
+/* .indicators-selector-box__notes {
 } */
+
+.indicators-selector-box__source {
+	display: flex;
+
+	& h3 {
+		margin-right: 0.5rem;
+	}
+}

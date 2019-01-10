@@ -81,3 +81,7 @@ hr {
 section {
 	margin-bottom: var(--spacing-2);
 }
+
+select {
+	text-overflow: ellipsis;
+}

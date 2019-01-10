@@ -44,8 +44,8 @@ export class HomePage extends Component {
 		Router.push(url);
 	};
 
-	handleSelectChange = (event, axis) => {
-		const { value } = event.target;
+	handleSelectChange = (option, axis) => {
+		const { value } = option;
 
 		const query = {
 			...this.props.router.query,
@@ -72,8 +72,8 @@ export class HomePage extends Component {
 			typeof router.query.x === 'undefined' ? 0 : parseInt(router.query.x, 10);
 		const y =
 			typeof router.query.y === 'undefined' ? 1 : parseInt(router.query.y, 10);
-		const xName = indicators[x].name;
-		const yName = indicators[y].name;
+		const xName = indicators[x].id;
+		const yName = indicators[y].id;
 
 		return (
 			<App title="Home" url={router.pathname}>

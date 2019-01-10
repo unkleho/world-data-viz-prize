@@ -370,8 +370,8 @@ export default class Bubbles extends React.Component {
 				ref={this.onBubblesGroupRef}
 				className="bubbles__group"
 				style={{
-          transform: `translate(${padding.top}px, ${padding.left}px)`,
-        }}
+					transform: `translate(${padding.top}px, ${padding.left}px)`,
+				}}
 			/>
 		);
 	}

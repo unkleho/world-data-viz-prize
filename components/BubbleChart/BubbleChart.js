@@ -87,10 +87,10 @@ class BubbleChart extends Component {
 											domain={yDomain}
 											// NOTE: Stylelint don't like this, so this file has been ignored
 											style={{
-                        ticklabels: {
-                          angle: -90,
-                        },
-                      }}
+												tickLabels: {
+													angle: -90,
+												},
+											}}
 											theme={victoryTheme}
 											offsetX={50}
 											fixLabelOverlap

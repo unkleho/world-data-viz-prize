@@ -35,20 +35,20 @@ class IndicatorsSelectorBox extends Component {
 				{/* <h2>{title}</h2> */}
 
 				<label>
-					<svg style={{ width: '24px', height: '24px', }} viewBox="0 0 24 24">
+					{axis}
+					<svg style={{ width: '24px', height: '36px', }} viewBox="0 0 24 24">
 						<path
-							fill="#000000"
+							fill="#FFFFFF"
 							d="M22,12L18,8V11H3V13H18V16L22,12Z"
 							transform={axis === 'y' ? 'rotate(-90 12 12)' : ''}
 						/>
 					</svg>
-					<br />
-					{axis}
 				</label>
 
 				<div className="indicators-selector-box__select-group">
 					<Select
-						className="indicators-selector-box__select"
+						className="select"
+						classNamePrefix="select"
 						isSearchable={false}
 						value={options[value]}
 						options={[

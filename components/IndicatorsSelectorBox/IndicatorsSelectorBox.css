@@ -16,10 +16,17 @@
 	}
 
 	& label {
-		width: 3rem;
-		text-align: center;
+		display: flex;
+		align-items: center;
+		width: 4rem;
+		height: 2rem;
+		font-weight: 300;
 
-		/* display: flex; */
+		/* text-align: center; */
+
+		& svg {
+			margin-left: 0.5rem;
+		}
 	}
 }
 
@@ -32,14 +39,15 @@
 
 .indicators-selector-box__select {
 	width: 100%;
+	font-size: var(--font-size-md);
 	margin-bottom: var(--spacing-1);
 }
 
-/* .indicators-selector-box__metadata { */
+.indicators-selector-box__metadata {
+	display: none;
 
-/* display: flex; */
-
-/* } */
+	/* display: flex; */
+}
 
 /* .indicators-selector-box__notes {
 } */

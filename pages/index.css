@@ -1,9 +1,16 @@
 .home-page__title {
-	font-size: var(--font-size-md);
-	line-height: var(--line-height-md);
+	font-size: var(--font-size-xlg);
+	line-height: var(--line-height-xlg);
 	margin-bottom: var(--spacing-1);
 }
 
 .home-page__chart {
-	margin-bottom: var(--spacing-2);
+	height: calc(100vh - 26rem);
+	margin-bottom: var(--spacing-1);
+}
+
+.home-page__intro {
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-sm);
+	margin-bottom: 1rem;
 }

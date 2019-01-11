@@ -51,7 +51,7 @@ class BubbleChart extends Component {
 			<div className={['bubble-chart', className || ''].join(' ')}>
 				<BubbleChartWrapper>
 					{(width, height) => {
-						console.log(width, height);
+						// console.log(width, height);
 
 						return (
 							<Fragment>
@@ -70,44 +70,42 @@ class BubbleChart extends Component {
 									onBubbleClick={onBubbleClick}
 								/>
 
-								{xDomain &&
-									xDomain[0] && (
-										<VictoryAxis
-											label={xName}
-											width={width}
-											height={height}
-											domain={xDomain}
-											theme={victoryTheme}
-											padding={padding}
-											offsetY={padding.bottom}
-											fixLabelOverlap
-											standalone={false}
-										/>
-									)}
+								{xDomain.some((d) => typeof d === 'number') && (
+									<VictoryAxis
+										label={xName}
+										width={width}
+										height={height}
+										domain={xDomain}
+										theme={victoryTheme}
+										padding={padding}
+										offsetY={padding.bottom}
+										fixLabelOverlap
+										standalone={false}
+									/>
+								)}
 
-								{yDomain &&
-									yDomain[0] && (
-										<VictoryAxis
-											dependentAxis
-											label={yName}
-											width={width}
-											height={height}
-											domain={yDomain}
-											// NOTE: Stylelint don't like this, so this file has been ignored
-											style={{
-												tickLabels: {
-													angle: -90,
-													textAnchor: 'middle',
-													padding: 9,
-												},
-											}}
-											theme={victoryTheme}
-											padding={padding}
-											offsetX={padding.left}
-											fixLabelOverlap
-											standalone={false}
-										/>
-									)}
+								{yDomain.some((d) => typeof d === 'number') && (
+									<VictoryAxis
+										dependentAxis
+										label={yName}
+										width={width}
+										height={height}
+										domain={yDomain}
+										// NOTE: Stylelint don't like this, so this file has been ignored
+										style={{
+											tickLabels: {
+												angle: -90,
+												textAnchor: 'middle',
+												padding: 9,
+											},
+										}}
+										theme={victoryTheme}
+										padding={padding}
+										offsetX={padding.left}
+										fixLabelOverlap
+										standalone={false}
+									/>
+								)}
 							</Fragment>
 						);
 					}}

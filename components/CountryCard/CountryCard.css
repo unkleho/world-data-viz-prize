@@ -1,4 +1,12 @@
 @import '../../styles/variables.css';
 
-/* .info-card {
+/* .country-card__title {
 } */
+
+.country-card {
+	& h3 {
+		font-size: var(--font-size-md);
+		line-height: var(--line-height-md);
+		margin-bottom: 1rem;
+	}
+}

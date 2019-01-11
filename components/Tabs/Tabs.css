@@ -1,0 +1,29 @@
+@import '../../styles/variables.css';
+
+.tabs {
+	display: flex;
+	border-top: var(--border-md);
+
+	/* border-bottom: var(--border-md); */
+
+	/* border-left: var(--border-md); */
+	margin-bottom: 1rem;
+}
+
+.tabs__tab {
+	flex: 1;
+	padding: 0.75rem;
+	border-bottom: var(--border-md);
+
+	/* border-right: var(--border-md); */
+	font-size: var(--font-size-sm);
+	text-transform: uppercase;
+	text-align: center;
+	color: var(--colour-grey-400);
+}
+
+.tabs__tab--is-selected {
+	border-bottom: var(--border-lg);
+	font-weight: 700;
+	color: var(--colour-white);
+}

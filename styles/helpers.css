@@ -31,3 +31,32 @@
 .container--xlg {
 	max-width: var(--container-width-xlg);
 }
+
+/*
+ * REACT-SELECT
+ * -------------------------------------------------------------------------- */
+
+.select {
+	margin-bottom: 1rem;
+
+	& .select__control {
+		min-height: 2rem;
+		background-color: var(--colour-grey-100);
+		border: none;
+		border-radius: 6px;
+	}
+}
+
+.heading-select {
+	& .heading-select__control {
+		border: none;
+		border-radius: 6px;
+		background-color: var(--colour-grey-100);
+	}
+
+	& .heading-select__single-value {
+		font-size: var(--font-size-lg);
+		font-weight: 700;
+		line-height: var(--line-height-lg);
+	}
+}

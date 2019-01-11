@@ -27,6 +27,8 @@ html {
 
 body {
 	margin: var(--spacing-1);
+	background-color: var(--colour-grey-900);
+	color: var(--colour-white);
 }
 
 h1,
@@ -39,7 +41,7 @@ h6 {
 }
 
 h1 {
-	color: var(--colour-primary);
+	/* color: var(--colour-primary); */
 	font-size: var(--font-size-xxlg);
 	line-height: var(--line-height-xxlg);
 	margin-bottom: var(--spacing-2);

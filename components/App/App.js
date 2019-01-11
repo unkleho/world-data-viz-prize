@@ -1,9 +1,11 @@
 import { Component } from 'react';
 
 import AppBase from '../AppBase';
+import Header from '../Header';
 
 import '../../styles/base.css';
 import '../../styles/helpers.css';
+import './App.css';
 
 class App extends Component {
 	render() {
@@ -26,7 +28,10 @@ class App extends Component {
 				imageAlt={imageAlt}
 				siteName={siteName}
 			>
-				{children}
+				<div className="app">
+					<Header />
+					{children}
+				</div>
 			</AppBase>
 		);
 	}

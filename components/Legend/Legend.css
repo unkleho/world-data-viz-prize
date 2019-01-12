@@ -3,18 +3,29 @@
 .legend {
 	display: flex;
 	flex-wrap: wrap;
+	max-width: 40rem;
 
 	/* margin-bottom: var(--spacing-1); */
 	font-size: var(--font-size-xs);
 	line-height: var(--line-height-xs);
 }
 
+/* @media (--screen-sm) {
+	.legend {
+		display: block;
+	}
+} */
+
 .legend__item {
 	display: flex;
 	flex: 0 0 33%;
 	padding: 0.25rem 0.25rem 0.25rem 0;
+}
 
-	/* margin-right: 1rem; */
+@media (--screen-sm) {
+	.legend__item {
+		flex: auto;
+	}
 }
 
 .legend__symbol {

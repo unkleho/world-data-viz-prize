@@ -14,6 +14,8 @@ class BubbleChart extends Component {
 		data: PropTypes.array,
 		xName: PropTypes.string,
 		yName: PropTypes.string,
+		xLabel: PropTypes.string,
+		yLabel: PropTypes.string,
 		padding: PropTypes.object,
 		selectedId: PropTypes.string,
 		bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
@@ -33,6 +35,8 @@ class BubbleChart extends Component {
 			data,
 			xName,
 			yName,
+			xLabel,
+			yLabel,
 			padding,
 			selectedId,
 			bubbleFill,
@@ -55,24 +59,9 @@ class BubbleChart extends Component {
 
 						return (
 							<Fragment>
-								<Bubbles
-									data={data}
-									xName={xName}
-									yName={yName}
-									width={width}
-									height={height}
-									padding={padding}
-									bubbleFill={bubbleFill}
-									bubbleOpacity={0.75}
-									selectedId={selectedId}
-									onBubbleMouseover={onBubbleMouseover}
-									onBubbleMouseout={onBubbleMouseout}
-									onBubbleClick={onBubbleClick}
-								/>
-
 								{xDomain.some((d) => typeof d === 'number') && (
 									<VictoryAxis
-										label={xName}
+										label={xLabel}
 										width={width}
 										height={height}
 										domain={xDomain}
@@ -87,7 +76,7 @@ class BubbleChart extends Component {
 								{yDomain.some((d) => typeof d === 'number') && (
 									<VictoryAxis
 										dependentAxis
-										label={yName}
+										label={yLabel}
 										width={width}
 										height={height}
 										domain={yDomain}
@@ -106,6 +95,21 @@ class BubbleChart extends Component {
 										standalone={false}
 									/>
 								)}
+
+								<Bubbles
+									data={data}
+									xName={xName}
+									yName={yName}
+									width={width}
+									height={height}
+									padding={padding}
+									bubbleFill={bubbleFill}
+									bubbleOpacity={0.75}
+									selectedId={selectedId}
+									onBubbleMouseover={onBubbleMouseover}
+									onBubbleMouseout={onBubbleMouseout}
+									onBubbleClick={onBubbleClick}
+								/>
 							</Fragment>
 						);
 					}}

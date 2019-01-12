@@ -2,6 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
+import { indicatorGroups } from '../../lib/data';
 import './IndicatorsSelectorBox.css';
 
 class IndicatorsSelectorBox extends Component {
@@ -50,22 +51,24 @@ class IndicatorsSelectorBox extends Component {
 						className="select"
 						classNamePrefix="select"
 						isSearchable={false}
+						// menuIsOpen
 						value={options[value]}
-						options={[
-							'info',
-							'life',
-							'economy',
-							'government',
-							'health',
-							'education',
-						].map((group) => ({
+						options={indicatorGroups.map((group) => ({
 							label: group,
 							options: options.filter((o) => o.type === group),
 						}))}
-						onChange={(event) => this.handleSelectChange(event, axis)}
 						// menuShouldScrollIntoView={true}
 						maxMenuHeight={500}
 						menuPlacement={'top'}
+						theme={(theme) => ({
+							...theme,
+							borderRadius: 6,
+							colors: {
+								...theme.colors,
+								primary: '#D10FC9',
+							},
+						})}
+						onChange={(event) => this.handleSelectChange(event, axis)}
 					/>
 
 					<div className="indicators-selector-box__metadata">
@@ -77,7 +80,7 @@ class IndicatorsSelectorBox extends Component {
 						)}
 
 						<div className="indicators-selector-box__source">
-							<h3>Source</h3>
+							<h3>Source:</h3>
 							<p>
 								<a
 									href={indicators[value].URL}

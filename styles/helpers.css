@@ -5,6 +5,10 @@
  * HELPERS
  * ========================================================================== */
 
+#__next {
+	height: 100%;
+}
+
 /*
  * CONTAINERS
  * -------------------------------------------------------------------------- */
@@ -39,11 +43,42 @@
 .select {
 	margin-bottom: 1rem;
 
+	& span {
+		border: none;
+	}
+
 	& .select__control {
 		min-height: 2rem;
-		background-color: var(--colour-grey-100);
+
+		/* background-color: var(--colour-grey-100); */
+		background-color: var(--colour-grey-800);
 		border: none;
 		border-radius: 6px;
+	}
+
+	/* & .select__control--is-focused {
+	} */
+
+	& .select__menu {
+		border-radius: 6px;
+		color: var(--colour-grey-900);
+		background-color: var(--colour-grey-100);
+	}
+
+	& .select__single-value {
+		font-size: var(--font-size-md);
+		line-height: var(--line-height-md);
+		font-weight: 600;
+		color: var(--colour-grey-100);
+	}
+
+	& .select__option--is-selected {
+		background-color: var(--colour-grey-900);
+	}
+
+	& .select__option--is-focused {
+		background-color: var(--colour-grey-200);
+		color: var(--colour-grey-900);
 	}
 }
 

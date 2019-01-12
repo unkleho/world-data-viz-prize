@@ -11,6 +11,7 @@ class App extends Component {
 	render() {
 		const {
 			children,
+			className,
 			title,
 			description,
 			url,
@@ -28,7 +29,7 @@ class App extends Component {
 				imageAlt={imageAlt}
 				siteName={siteName}
 			>
-				<div className="app">
+				<div className={['app', className || ''].join(' ')}>
 					<Header />
 					{children}
 				</div>

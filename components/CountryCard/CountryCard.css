@@ -1,12 +1,65 @@
 @import '../../styles/variables.css';
 
-/* .country-card__title {
-} */
-
 .country-card {
-	& h3 {
-		font-size: var(--font-size-md);
-		line-height: var(--line-height-md);
+	& h2 {
 		margin-bottom: 1rem;
+		color: var(--colour-white);
+		text-transform: uppercase;
+		font-size: var(--font-size-sm);
+		font-weight: 400;
+		line-height: var(--line-height-sm);
+	}
+
+	& h3 {
+		margin-bottom: 1rem;
+		font-weight: 500;
+		font-size: var(--font-size-md);
+
+		/* line-height: var(--line-height-md); */
+		line-height: 1.5rem;
+	}
+}
+
+.country-card__title {
+	margin-bottom: 1rem;
+
+	/* margin-left: -2px; */
+	padding-left: 1px;
+
+	& .select__single-value {
+		font-size: var(--font-size-lg);
+		line-height: var(--line-size-lg);
+	}
+}
+
+.country-card__group {
+	margin-bottom: 1rem;
+	padding-top: 0.5rem;
+	border-top: var(--border-md);
+
+	/* border-image: linear-gradient(
+		to right,
+		var(--colour-grey-700) 50%,
+		var(--colour-grey-900) 100%
+	);
+	border-image-slice: 1; */
+}
+
+.country-card__indicator {
+	display: flex;
+	align-items: baseline;
+	padding-left: 1rem;
+
+	& hgroup {
+		flex: 2;
+		padding-right: 1rem;
+		color: var(--colour-grey-400);
+	}
+
+	& div {
+		flex: 1;
+		color: var(--colour-grey-50);
+		font-size: var(--font-size-lg);
+		text-align: right;
 	}
 }

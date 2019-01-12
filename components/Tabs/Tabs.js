@@ -19,7 +19,6 @@ class Tabs extends Component {
 
 	render() {
 		const { className, labels, value } = this.props;
-		console.log(className);
 
 		return (
 			<div className={['tabs', className || ''].join(' ')}>
@@ -31,6 +30,7 @@ class Tabs extends Component {
 								value === i ? 'tabs__tab--is-selected' : '',
 							].join(' ')}
 							onClick={(event) => this.handleClick(event, i)}
+							key={label}
 						>
 							{label}
 						</div>

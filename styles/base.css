@@ -6,6 +6,7 @@
 		font-family: 'Inter UI var alt', sans-serif;
 	}
 }
+@import './variables.css';
 
 /*
  * BASE STYLES
@@ -13,6 +14,7 @@
 
 html {
 	box-sizing: border-box;
+	height: 100%;
 }
 
 *,
@@ -26,9 +28,16 @@ html {
 }
 
 body {
-	margin: var(--spacing-1);
+	height: 100%;
+	padding: var(--spacing-1);
 	background-color: var(--colour-grey-900);
 	color: var(--colour-white);
+}
+
+@media (--screen-sm) {
+	body {
+		padding: var(--spacing-2);
+	}
 }
 
 h1,
@@ -78,6 +87,11 @@ hr {
 	line-height: var(--line-height-md);
 	margin-top: 0;
 	margin-bottom: var(--spacing-2);
+}
+
+a:link {
+	color: var(--colour-primary);
+	text-decoration: none;
 }
 
 section {

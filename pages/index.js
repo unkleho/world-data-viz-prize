@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import Router from 'next/router';
 import * as d3 from 'd3';
 import queryString from 'query-string';
@@ -68,7 +68,17 @@ export class HomePage extends Component {
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
-		console.log(url);
+
+		Router.push(url);
+	};
+
+	handleCountryChange = (value) => {
+		const query = {
+			...this.props.router.query,
+			country: value.value,
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
 
 		Router.push(url);
 	};
@@ -89,6 +99,10 @@ export class HomePage extends Component {
 		const tab = typeof query.tab === 'undefined' ? 0 : parseInt(query.tab, 10);
 		const xName = indicators[x].id;
 		const yName = indicators[y].id;
+		const xLabel = indicators[x].name;
+		const yLabel = indicators[y].name;
+		// console.log(indicators[x]);
+
 		// const flippedURL = `/?${queryString.stringify({
 		// 	...query,
 		// 	x: y,
@@ -96,108 +110,127 @@ export class HomePage extends Component {
 		// })}`;
 
 		return (
-			<App title="Home" url={pathname}>
-				<h1 className="home-page__title">
-					What Makes a &lsquo;Good&rsquo; Government?
-				</h1>
+			<App className="home-page__app" title="Home" url={pathname}>
+				<main className="home-page">
+					<h1 className="home-page__title">
+						What Makes a &lsquo;Good&rsquo; Government?
+					</h1>
 
-				<p className="home-page__intro">
-					Explore this dataset of 195 countries and over 30 indicators.
-				</p>
+					<p className="home-page__intro">
+						Explore this dataset of 195 countries and over 30 indicators.
+					</p>
 
-				<Legend data={continents} />
+					<br />
 
-				<BubbleChart
-					className="home-page__chart"
-					data={data}
-					xName={xName}
-					yName={yName}
-					padding={{
-						top: 32,
-						right: 16,
-						bottom: 48,
-						left: 48,
-					}}
-					selectedId={query.country}
-					bubbleFill={(d) => {
-						const continent = continents.find((c) => c.name === d.continent);
-						return continent ? continent.colour : null;
-					}}
-					onBubbleMouseover={(event, d) => {
-						this.setState({
-							showTooltip: true,
-							tooltipX: event.clientX,
-							tooltipY: event.clientY,
-							tooltipContent: d.country,
-						});
-					}}
-					onBubbleMouseout={() => {
-						this.setState({
-							showTooltip: false,
-							tooltipX: null,
-							tooltipY: null,
-							tooltipContent: null,
-						});
-					}}
-					onBubbleClick={this.handleBubbleClick}
-				/>
+					<Legend data={continents} />
 
-				<Tabs
-					labels={[
-						'Indicators',
-						`Country${query.country ? ` (${query.country})` : ''}`,
-					]}
-					value={tab}
-					onClick={this.handleTabClick}
-				/>
+					<BubbleChart
+						className="home-page__chart"
+						data={data}
+						xName={xName}
+						yName={yName}
+						xLabel={xLabel}
+						yLabel={yLabel}
+						padding={{
+							top: 32,
+							right: 16,
+							bottom: 48,
+							left: 48,
+						}}
+						selectedId={query.country}
+						bubbleFill={(d) => {
+							const continent = continents.find((c) => c.name === d.continent);
+							return continent ? continent.colour : null;
+						}}
+						onBubbleMouseover={(event, d) => {
+							this.setState({
+								showTooltip: true,
+								tooltipX: event.clientX,
+								tooltipY: event.clientY,
+								tooltipContent: d.country,
+							});
+						}}
+						onBubbleMouseout={() => {
+							this.setState({
+								showTooltip: false,
+								tooltipX: null,
+								tooltipY: null,
+								tooltipContent: null,
+							});
+						}}
+						onBubbleClick={this.handleBubbleClick}
+					/>
 
-				{tab === 0 && (
-					<Fragment>
-						<IndicatorsSelectorBox
-							title="X"
-							indicators={indicators}
-							value={x}
-							axis="x"
-							onChange={this.handleSelectChange}
+					<Tabs
+						className="home-page__tabs"
+						labels={[
+							'Indicators',
+							`Country${query.country ? ` (${query.country})` : ''}`,
+						]}
+						value={tab}
+						onClick={this.handleTabClick}
+					/>
+
+					{tab === 0 && (
+						<div>
+							<IndicatorsSelectorBox
+								title="X"
+								indicators={indicators}
+								value={x}
+								axis="x"
+								onChange={this.handleSelectChange}
+							/>
+
+							<IndicatorsSelectorBox
+								title="Y"
+								indicators={indicators}
+								value={y}
+								axis="y"
+								onChange={this.handleSelectChange}
+							/>
+						</div>
+					)}
+
+					{tab === 1 && (
+						<CountryCard
+							country={data.find((d) => d.id === query.country)}
+							onCountryChange={this.handleCountryChange}
 						/>
-
-						<IndicatorsSelectorBox
-							title="Y"
-							indicators={indicators}
-							value={y}
-							axis="y"
-							onChange={this.handleSelectChange}
-						/>
-					</Fragment>
-				)}
-
-				{tab === 1 && (
-					<CountryCard country={data.find((d) => d.id === query.country)} />
-				)}
-				{/* <SwipeableViews>
+					)}
+					{/* <SwipeableViews>
 					<div>test</div>
 					<div>test</div>
 					<div>test</div>
 				</SwipeableViews> */}
 
-				{/* eslint-disable jsx-a11y/anchor-is-valid */}
-				{/* <Link route={flippedURL}>
+					{/* eslint-disable jsx-a11y/anchor-is-valid */}
+					{/* <Link route={flippedURL}>
 					<a>
-						<svg style={{ width: '24px', height: '24px' }} viewBox="0 0 24 24">
-							<path
-								fill="#000000"
-								d="M16.89,15.5L18.31,16.89C19.21,15.73 19.76,14.39 19.93,13H17.91C17.77,13.87 17.43,14.72 16.89,15.5M13,17.9V19.92C14.39,19.75 15.74,19.21 16.9,18.31L15.46,16.87C14.71,17.41 13.87,17.76 13,17.9M19.93,11C19.76,9.61 19.21,8.27 18.31,7.11L16.89,8.53C17.43,9.28 17.77,10.13 17.91,11M15.55,5.55L11,1V4.07C7.06,4.56 4,7.92 4,12C4,16.08 7.05,19.44 11,19.93V17.91C8.16,17.43 6,14.97 6,12C6,9.03 8.16,6.57 11,6.09V10L15.55,5.55Z"
-							/>
-						</svg>
+					<svg style={{ width: '24px', height: '24px' }} viewBox="0 0 24 24">
+					<path
+					fill="#000000"
+					d="M16.89,15.5L18.31,16.89C19.21,15.73 19.76,14.39 19.93,13H17.91C17.77,13.87 17.43,14.72 16.89,15.5M13,17.9V19.92C14.39,19.75 15.74,19.21 16.9,18.31L15.46,16.87C14.71,17.41 13.87,17.76 13,17.9M19.93,11C19.76,9.61 19.21,8.27 18.31,7.11L16.89,8.53C17.43,9.28 17.77,10.13 17.91,11M15.55,5.55L11,1V4.07C7.06,4.56 4,7.92 4,12C4,16.08 7.05,19.44 11,19.93V17.91C8.16,17.43 6,14.97 6,12C6,9.03 8.16,6.57 11,6.09V10L15.55,5.55Z"
+					/>
+					</svg>
 					</a>
 				</Link> */}
-				{/* eslint-enable jsx-a11y/anchor-is-valid */}
+					{/* eslint-enable jsx-a11y/anchor-is-valid */}
 
-				{showTooltip && (
-					<Tooltip x={tooltipX} y={tooltipY - 30}>
-						{tooltipContent}
-					</Tooltip>
-				)}
+					{showTooltip && (
+						<Tooltip x={tooltipX} y={tooltipY - 30}>
+							{tooltipContent}
+						</Tooltip>
+					)}
+				</main>
+
+				<aside className="home-page__aside">
+					<h1>Country</h1>
+
+					<CountryCard
+						country={data.find((d) => d.id === query.country)}
+						onCountryChange={this.handleCountryChange}
+					/>
+				</aside>
 			</App>
 		);
 	}

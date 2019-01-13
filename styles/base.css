@@ -89,7 +89,8 @@ hr {
 	margin-bottom: var(--spacing-2);
 }
 
-a:link {
+a:link,
+a:visited {
 	color: var(--colour-primary);
 	text-decoration: none;
 }

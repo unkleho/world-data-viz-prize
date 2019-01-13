@@ -71,6 +71,18 @@
 
 	/* padding-left: 1rem; */
 
+	& button {
+		background-color: transparent;
+		color: var(--colour-grey-700);
+		margin-right: 0.5rem;
+		border-radius: 6px;
+		border: 1px solid var(--colour-grey-800);
+	}
+
+	& button:nth-of-type(2) {
+		margin-right: 1rem;
+	}
+
 	& hgroup {
 		flex: 2;
 		padding-right: 1rem;
@@ -87,6 +99,6 @@
 
 @media (--screen-sm) {
 	.country-card__indicator {
-		padding-left: 1rem;
+		padding-left: 2rem;
 	}
 }

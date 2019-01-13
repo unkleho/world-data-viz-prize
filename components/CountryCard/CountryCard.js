@@ -1,8 +1,9 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
+import CountUp from 'react-countup';
 
-import { numberWithCommas } from '../../lib/dataUtils';
+import { precision } from '../../lib/dataUtils';
 import { indicators, indicatorGroups } from '../../lib/data';
 import './CountryCard.css';
 
@@ -99,13 +100,21 @@ class CountryCard extends Component {
 											className="country-card__indicator"
 											key={indicator.name}
 										>
+											{/* <button>x</button>
+											<button>y</button> */}
 											<hgroup>
 												<h3>{indicator.name}</h3>
 												{indicator.notes && <p>{indicator.notes}</p>}
 											</hgroup>
 											<div className="country-card__value">
 												{indicator.format === 'dollar' ? '$' : ''}
-												{numberWithCommas(indicator.value)}
+												<CountUp
+													end={indicator.value}
+													duration={0.5}
+													separator={','}
+													decimals={precision(indicator.value)}
+												/>
+												{/* {numberWithCommas(indicator.value)} */}
 												{indicator.format === 'percentage' ? '%' : ''}
 											</div>
 										</div>

@@ -62,6 +62,7 @@
 @media (--screen-sm) {
 	.home-page__title {
 		font-size: var(--font-size-xxlg);
+		line-height: var(--line-height-xlg);
 		margin-bottom: var(--spacing-1);
 	}
 }

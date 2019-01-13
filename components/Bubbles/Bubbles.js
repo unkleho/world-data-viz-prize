@@ -1,3 +1,6 @@
+/* eslint func-names: 0 */
+// Need to use 'function()' so D3 can access 'this' properly
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
@@ -143,25 +146,32 @@ export default class Bubbles extends React.Component {
 		// Enter
 		const bubblesE = bubbles
 			.enter()
-			.append('circle')
+			.append('g')
 			.classed('bubble', true)
+			.append('circle')
 			.attr('id', (d) => d.id)
 			.attr('r', 0)
 			.attr('cx', (d) => d.x)
 			.attr('cy', (d) => d.y)
 			.attr('fill', this.bubbleFill)
 			.attr('opacity', this.bubbleOpacity)
-			// .attr('stroke', (d) => d3.rgb(fillColor(d.group)).darker())
-			// .attr('stroke-width', 2)
 			.on('mouseover', this.handleBubbleMouseover) // eslint-disable-line
 			.on('mouseout', this.handleBubbleMouseout) // eslint-disable-line
 			.on('click', (d, i) => {
 				this.handleBubbleClick(d, i);
 				// d3.select(this).attr('r', 20);
 			})
+			.select(function() {
+				return this.parentNode;
+			})
+			.append('text')
+			.select(function() {
+				return this.parentNode;
+			})
 			.merge(bubbles); // eslint-disable-line
 
 		bubblesE
+			.selectAll('circle')
 			.transition()
 			.duration(2000)
 			.attr('r', (d) => {
@@ -170,10 +180,21 @@ export default class Bubbles extends React.Component {
 				}
 
 				if (d.id === selectedId) {
-					return 20;
+					return 11;
+					// return 50;
 				}
 
 				return d.radius;
+			})
+			.attr('stroke', (d) => {
+				if (d.id === selectedId) {
+					return 'white';
+				}
+			})
+			.attr('stroke-width', (d) => {
+				if (d.id === selectedId) {
+					return 6;
+				}
 			})
 			.on('end', () => {
 				this.simulation
@@ -181,6 +202,25 @@ export default class Bubbles extends React.Component {
 					.alpha(1)
 					.restart();
 			});
+
+		// Update text
+		bubblesE
+			.selectAll('text')
+			.filter((d) => {
+				return d.id === selectedId;
+			})
+			.attr('fill', 'white')
+			.attr('text-anchor', 'middle')
+			.attr('dy', -20)
+			.attr('font-size', 12)
+			.text(this.bubbleSelectedText);
+
+		bubblesE
+			.selectAll('text')
+			.filter((d) => {
+				return d.id !== selectedId;
+			})
+			.text(null);
 	};
 
 	regroupBubbles = () => {
@@ -324,6 +364,13 @@ export default class Bubbles extends React.Component {
 		}
 	};
 
+	/** Set selected bubble's text */
+	bubbleSelectedText = (d) => {
+		if (typeof this.props.bubbleSelectedText === 'function') {
+			return this.props.bubbleSelectedText(d);
+		}
+	};
+
 	// --------------------------------------------------------------------------
 	// Event Handlers
 	// --------------------------------------------------------------------------
@@ -392,6 +439,7 @@ Bubbles.propTypes = {
 	yName: PropTypes.string,
 	bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 	bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+	bubbleSelectedText: PropTypes.func,
 	onBubbleMouseover: PropTypes.func,
 	onBubbleMouseout: PropTypes.func,
 	onBubbleClick: PropTypes.func,

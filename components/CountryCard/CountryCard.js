@@ -70,7 +70,7 @@ class CountryCard extends Component {
 
 				{data.map((group) => {
 					return (
-						<div className="country-card__group">
+						<div className="country-card__group" key={group.name}>
 							<h2>{group.name}</h2>
 
 							{group.indicators.map((indicator) => {

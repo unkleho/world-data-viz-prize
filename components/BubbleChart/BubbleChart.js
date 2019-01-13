@@ -20,6 +20,7 @@ class BubbleChart extends Component {
 		selectedId: PropTypes.string,
 		bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 		bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+		bubbleSelectedText: PropTypes.func,
 		onBubbleMouseover: PropTypes.func,
 		onBubbleMouseout: PropTypes.func,
 		onBubbleClick: PropTypes.func,
@@ -40,6 +41,7 @@ class BubbleChart extends Component {
 			padding,
 			selectedId,
 			bubbleFill,
+			bubbleSelectedText,
 			onBubbleMouseover,
 			onBubbleMouseout,
 			onBubbleClick,
@@ -105,6 +107,7 @@ class BubbleChart extends Component {
 									padding={padding}
 									bubbleFill={bubbleFill}
 									bubbleOpacity={0.75}
+									bubbleSelectedText={bubbleSelectedText}
 									selectedId={selectedId}
 									onBubbleMouseover={onBubbleMouseover}
 									onBubbleMouseout={onBubbleMouseout}

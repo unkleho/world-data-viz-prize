@@ -17,7 +17,9 @@ class Tooltip extends Component {
 				className="tooltip"
 				style={{
 					position: 'absolute',
-					top: y,
+					fontSize: 12,
+					transform: 'translate(-50%, 0)',
+					top: y + 6,
 					left: x,
 				}}
 			>

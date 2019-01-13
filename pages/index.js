@@ -45,6 +45,11 @@ export class HomePage extends Component {
 		const url = `/?${queryString.stringify(query)}`;
 
 		Router.push(url);
+
+		// Hide tooltip, otherwise both tooltips show
+		this.setState({
+			showTooltip: false,
+		});
 	};
 
 	handleSelectChange = (option, axis) => {
@@ -142,13 +147,21 @@ export class HomePage extends Component {
 							const continent = continents.find((c) => c.name === d.continent);
 							return continent ? continent.colour : null;
 						}}
+						bubbleSelectedText={(d) => {
+							return d.country;
+						}}
 						onBubbleMouseover={(event, d) => {
-							this.setState({
-								showTooltip: true,
-								tooltipX: event.clientX,
-								tooltipY: event.clientY,
-								tooltipContent: d.country,
-							});
+							console.log(event);
+
+							// Only show tooltip if not currently selected
+							if (d.id !== query.country) {
+								this.setState({
+									showTooltip: true,
+									tooltipX: event.clientX,
+									tooltipY: event.clientY,
+									tooltipContent: d.country,
+								});
+							}
 						}}
 						onBubbleMouseout={() => {
 							this.setState({

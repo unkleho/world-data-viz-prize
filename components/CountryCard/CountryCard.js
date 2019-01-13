@@ -33,6 +33,7 @@ class CountryCard extends Component {
 		// const countryData = Object.keys(country)
 		// 	.filter((c) => c !== 'country')
 		// 	.filter((c) => c !== 'radius');
+		// console.log(country);
 
 		// Build country data, grouping indicators together
 		const data = indicatorGroups.map((group) => {
@@ -69,32 +70,50 @@ class CountryCard extends Component {
 					onChange={this.handleCountryChange}
 				/>
 
-				{data.map((group) => {
-					return (
-						<div className="country-card__group" key={group.name}>
-							<h2>{group.name}</h2>
+				{!country.id && (
+					<p>
+						Select a country by using the drop down above, or clicking on a
+						circle.
+					</p>
+				)}
 
-							{group.indicators.map((indicator) => {
-								if (indicator.value === null) {
-									return null;
-								}
+				{country.id &&
+					data.map((group) => {
+						// console.log(group);
 
-								return (
-									<div className="country-card__indicator" key={indicator.name}>
-										<hgroup>
-											<h3>{indicator.name}</h3>
-										</hgroup>
-										<div className="country-card__value">
-											{indicator.format === 'dollar' ? '$' : ''}
-											{numberWithCommas(indicator.value)}
-											{indicator.format === 'percentage' ? '%' : ''}
+						if (group.indicators.length === 0) {
+							return null;
+						}
+
+						return (
+							<div className="country-card__group" key={group.name}>
+								<h2>{group.name}</h2>
+
+								{group.indicators.map((indicator) => {
+									if (indicator.value === null) {
+										return null;
+									}
+
+									return (
+										<div
+											className="country-card__indicator"
+											key={indicator.name}
+										>
+											<hgroup>
+												<h3>{indicator.name}</h3>
+												{indicator.notes && <p>{indicator.notes}</p>}
+											</hgroup>
+											<div className="country-card__value">
+												{indicator.format === 'dollar' ? '$' : ''}
+												{numberWithCommas(indicator.value)}
+												{indicator.format === 'percentage' ? '%' : ''}
+											</div>
 										</div>
-									</div>
-								);
-							})}
-						</div>
-					);
-				})}
+									);
+								})}
+							</div>
+						);
+					})}
 			</article>
 		);
 	}

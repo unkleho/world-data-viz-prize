@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 
 import { numberWithCommas } from '../../lib/dataUtils';
-import { countries, indicators, indicatorGroups } from '../../lib/data';
+import { indicators, indicatorGroups } from '../../lib/data';
 import './CountryCard.css';
 
 class CountryCard extends Component {
@@ -14,6 +14,7 @@ class CountryCard extends Component {
 
 	static defaultProps = {
 		country: {},
+		countries: [],
 	};
 
 	handleCountryChange = (value) => {
@@ -23,7 +24,7 @@ class CountryCard extends Component {
 	};
 
 	render() {
-		const { country } = this.props;
+		const { country, countries } = this.props;
 		const options = countries.map((c) => ({
 			label: c.Country_Name,
 			value: c.Country_Code_3,
@@ -79,7 +80,7 @@ class CountryCard extends Component {
 								}
 
 								return (
-									<div className="country-card__indicator">
+									<div className="country-card__indicator" key={indicator.name}>
 										<hgroup>
 											<h3>{indicator.name}</h3>
 										</hgroup>

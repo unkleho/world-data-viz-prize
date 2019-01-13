@@ -37,7 +37,10 @@ class IndicatorsSelectorBox extends Component {
 
 				<label>
 					{axis}
-					<svg style={{ width: '24px', height: '36px', }} viewBox="0 0 24 24">
+					<svg
+						style={{ width: '24px', height: '36px', position: 'relative', }}
+						viewBox="0 0 24 24"
+					>
 						<path
 							fill="#FFFFFF"
 							d="M22,12L18,8V11H3V13H18V16L22,12Z"

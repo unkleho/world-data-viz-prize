@@ -12,7 +12,7 @@ import Tabs from '../components/Tabs';
 import CountryCard from '../components/CountryCard';
 // import { Link } from '../routes';
 import IndicatorsSelectorBox from '../components/IndicatorsSelectorBox';
-import { indicators, continents } from '../lib/data';
+import { indicators, continents, countries } from '../lib/data';
 import { processData } from '../lib/dataUtils';
 
 import './index.css';
@@ -29,10 +29,17 @@ export class HomePage extends Component {
 	};
 
 	async componentDidMount() {
-		const data = await d3.csv('./static/data.csv');
+		const rawData = await d3.csv('./static/data.csv');
+		const data = processData(rawData);
 
 		this.setState({
-			data: processData(data),
+			data,
+			// Filter out countries not in data
+			countries: countries.filter((country) =>
+				data.some((d) => {
+					return d.id === country.Country_Code_3;
+				}),
+			),
 		});
 	}
 
@@ -106,8 +113,6 @@ export class HomePage extends Component {
 		const yName = indicators[y].id;
 		const xLabel = indicators[x].name;
 		const yLabel = indicators[y].name;
-		// console.log(indicators[x]);
-
 		// const flippedURL = `/?${queryString.stringify({
 		// 	...query,
 		// 	x: y,
@@ -207,14 +212,10 @@ export class HomePage extends Component {
 					{tab === 1 && (
 						<CountryCard
 							country={data.find((d) => d.id === query.country)}
+							countries={this.state.countries}
 							onCountryChange={this.handleCountryChange}
 						/>
 					)}
-					{/* <SwipeableViews>
-					<div>test</div>
-					<div>test</div>
-					<div>test</div>
-				</SwipeableViews> */}
 
 					{/* eslint-disable jsx-a11y/anchor-is-valid */}
 					{/* <Link route={flippedURL}>
@@ -241,6 +242,7 @@ export class HomePage extends Component {
 
 					<CountryCard
 						country={data.find((d) => d.id === query.country)}
+						countries={this.state.countries}
 						onCountryChange={this.handleCountryChange}
 					/>
 				</aside>

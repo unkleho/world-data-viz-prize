@@ -92,6 +92,7 @@
 @media (--screen-sm) {
 	.home-page__tabs {
 		/* display: block; */
+		margin-bottom: 0.5rem;
 
 		& .tabs__tab:first-child {
 			padding-left: 0;

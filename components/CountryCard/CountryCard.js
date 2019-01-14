@@ -3,19 +3,23 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import CountUp from 'react-countup';
 
-import { precision } from '../../lib/dataUtils';
+import { precision, getCountryRank } from '../../lib/dataUtils';
 import { indicators, indicatorGroups } from '../../lib/data';
 import './CountryCard.css';
 
 class CountryCard extends Component {
 	static propTypes = {
 		country: PropTypes.object,
+		countries: PropTypes.array,
+		data: PropTypes.array,
 		onCountryChange: PropTypes.func,
+		onIndicatorClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		country: {},
 		countries: [],
+		data: [],
 	};
 
 	handleCountryChange = (value) => {
@@ -24,8 +28,14 @@ class CountryCard extends Component {
 		}
 	};
 
+	handleIndicatorClick = (indicator) => {
+		if (typeof this.props.onIndicatorClick === 'function') {
+			this.props.onIndicatorClick(indicator);
+		}
+	};
+
 	render() {
-		const { country, countries } = this.props;
+		const { country, countries, data } = this.props;
 		const options = countries.map((c) => ({
 			label: c.Country_Name,
 			value: c.Country_Code_3,
@@ -37,7 +47,7 @@ class CountryCard extends Component {
 		// console.log(country);
 
 		// Build country data, grouping indicators together
-		const data = indicatorGroups.map((group) => {
+		const countryData = indicatorGroups.map((group) => {
 			return {
 				name: group,
 				indicators: indicators
@@ -79,7 +89,7 @@ class CountryCard extends Component {
 				)}
 
 				{country.id &&
-					data.map((group) => {
+					countryData.map((group) => {
 						// console.log(group);
 
 						if (group.indicators.length === 0) {
@@ -95,6 +105,15 @@ class CountryCard extends Component {
 										return null;
 									}
 
+									// console.log(indicator);
+
+									const { rank, total } = getCountryRank(
+										data,
+										country.id,
+										indicator.id,
+										indicator.isLowerBetter,
+									);
+
 									return (
 										<div
 											className="country-card__indicator"
@@ -103,7 +122,14 @@ class CountryCard extends Component {
 											{/* <button>x</button>
 											<button>y</button> */}
 											<hgroup>
-												<h3>{indicator.name}</h3>
+												<h3>
+													<button
+														onClick={() => this.handleIndicatorClick(indicator)}
+														title="Select this indicator as X axis on chart."
+													>
+														{indicator.name}
+													</button>
+												</h3>
 												{indicator.notes && <p>{indicator.notes}</p>}
 											</hgroup>
 											<div className="country-card__value">
@@ -116,6 +142,9 @@ class CountryCard extends Component {
 												/>
 												{/* {numberWithCommas(indicator.value)} */}
 												{indicator.format === 'percentage' ? '%' : ''}
+												<p>
+													{rank} of {total}
+												</p>
 											</div>
 										</div>
 									);

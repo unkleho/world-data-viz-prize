@@ -95,6 +95,19 @@ export class HomePage extends Component {
 		Router.push(url);
 	};
 
+	handleIndicatorClick = (indicator) => {
+		const x = indicators.findIndex((ind) => ind.id === indicator.id);
+
+		const query = {
+			...this.props.router.query,
+			x,
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
+	};
+
 	render() {
 		const { router } = this.props;
 		const { query, pathname } = router;
@@ -213,7 +226,9 @@ export class HomePage extends Component {
 						<CountryCard
 							country={data.find((d) => d.id === query.country)}
 							countries={this.state.countries}
+							data={data}
 							onCountryChange={this.handleCountryChange}
+							onIndicatorClick={this.handleIndicatorClick}
 						/>
 					)}
 
@@ -243,7 +258,9 @@ export class HomePage extends Component {
 					<CountryCard
 						country={data.find((d) => d.id === query.country)}
 						countries={this.state.countries}
+						data={data}
 						onCountryChange={this.handleCountryChange}
+						onIndicatorClick={this.handleIndicatorClick}
 					/>
 				</aside>
 			</App>

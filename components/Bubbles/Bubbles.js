@@ -222,6 +222,15 @@ export default class Bubbles extends React.Component {
 				return d.id !== selectedId;
 			})
 			.text(null);
+
+		// Sort bubbles, moving selected one to top
+		bubblesE.sort((a) => {
+			if (a.id === selectedId) {
+				return 1;
+			}
+
+			return -1;
+		});
 	};
 
 	regroupBubbles = () => {

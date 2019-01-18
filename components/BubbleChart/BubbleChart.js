@@ -24,6 +24,7 @@ class BubbleChart extends Component {
 		onBubbleMouseover: PropTypes.func,
 		onBubbleMouseout: PropTypes.func,
 		onBubbleClick: PropTypes.func,
+		onBubbleEnter: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -45,6 +46,7 @@ class BubbleChart extends Component {
 			onBubbleMouseover,
 			onBubbleMouseout,
 			onBubbleClick,
+			onBubbleEnter,
 		} = this.props;
 		const xDomain = d3.extent(data, (d) => {
 			return d[xName];
@@ -112,6 +114,7 @@ class BubbleChart extends Component {
 									onBubbleMouseover={onBubbleMouseover}
 									onBubbleMouseout={onBubbleMouseout}
 									onBubbleClick={onBubbleClick}
+									onBubbleEnter={onBubbleEnter}
 								/>
 							</Fragment>
 						);

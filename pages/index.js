@@ -169,7 +169,7 @@ export class HomePage extends Component {
 							return d.country;
 						}}
 						onBubbleMouseover={(event, d) => {
-							console.log(event);
+							// console.log(event);
 
 							// Only show tooltip if not currently selected
 							if (d.id !== query.country) {

@@ -155,6 +155,7 @@ export default class Bubbles extends React.Component {
 			.attr('cy', (d) => d.y)
 			.attr('fill', this.bubbleFill)
 			.attr('opacity', this.bubbleOpacity)
+			.call(this.handleBubbleEnter)
 			.on('mouseover', this.handleBubbleMouseover) // eslint-disable-line
 			.on('mouseout', this.handleBubbleMouseout) // eslint-disable-line
 			.on('click', (d, i) => {
@@ -393,6 +394,13 @@ export default class Bubbles extends React.Component {
 		}
 	};
 
+	/** Advanced D3 manipulation available in this callback */
+	handleBubbleEnter = (node) => {
+		if (typeof this.props.onBubbleEnter === 'function') {
+			this.props.onBubbleEnter(node);
+		}
+	};
+
 	// shouldComponentUpdate() {
 	// 	// we will handle moving the nodes on our own with d3.js
 	// 	// make React ignore this component
@@ -443,4 +451,5 @@ Bubbles.propTypes = {
 	onBubbleMouseover: PropTypes.func,
 	onBubbleMouseout: PropTypes.func,
 	onBubbleClick: PropTypes.func,
+	onBubbleEnter: PropTypes.func,
 };

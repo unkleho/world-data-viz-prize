@@ -105,8 +105,6 @@ class CountryCard extends Component {
 										return null;
 									}
 
-									// console.log(indicator);
-
 									const { rank, total } = getCountryRank(
 										data,
 										country.id,

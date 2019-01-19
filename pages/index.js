@@ -10,9 +10,10 @@ import Tooltip from '../components/Tooltip';
 import Legend from '../components/Legend';
 import Tabs from '../components/Tabs';
 import CountryCard from '../components/CountryCard';
+import InsightCard from '../components/InsightCard';
 // import { Link } from '../routes';
 import IndicatorsSelectorBox from '../components/IndicatorsSelectorBox';
-import { indicators, continents, countries } from '../lib/data';
+import { indicators, continents, countries, insights } from '../lib/data';
 import { processData } from '../lib/dataUtils';
 
 import './index.css';
@@ -106,6 +107,10 @@ export class HomePage extends Component {
 		const url = `/?${queryString.stringify(query)}`;
 
 		Router.push(url);
+	};
+
+	handleInsightChange = (index, indexLatest, meta) => {
+		console.log(index, indexLatest, meta);
 	};
 
 	render() {
@@ -253,6 +258,13 @@ export class HomePage extends Component {
 				</main>
 
 				<aside className="home-page__aside">
+					<h1>Insight</h1>
+					<InsightCard
+						index={0}
+						insights={insights}
+						onChangeIndex={this.handleInsightChange}
+					/>
+
 					<h1>Country</h1>
 
 					<CountryCard

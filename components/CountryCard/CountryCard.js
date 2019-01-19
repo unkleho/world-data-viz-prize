@@ -124,6 +124,7 @@ class CountryCard extends Component {
 											<hgroup>
 												<h3>
 													<button
+														className="country-card__indicator-button"
 														onClick={() => this.handleIndicatorClick(indicator)}
 														title="Select this indicator as X axis on chart."
 													>

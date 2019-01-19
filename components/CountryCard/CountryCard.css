@@ -17,22 +17,6 @@
 		font-size: var(--font-size-sm);
 		line-height: var(--line-height-sm);
 
-		& button {
-			background-color: transparent;
-			color: inherit;
-			border: none;
-			padding: inherit;
-			text-align: inherit;
-			font-size: inherit;
-			line-height: inherit;
-			font-weight: inherit;
-			cursor: pointer;
-		}
-
-		& button:hover {
-			color: var(--colour-primary);
-		}
-
 		/* line-height: var(--line-height-md); */
 	}
 
@@ -121,6 +105,22 @@
 @media (--screen-lg) {
 	.country-card__indicator {
 		padding-left: 2rem;
+	}
+}
+
+.country-card__indicator-button {
+	background-color: transparent;
+	color: inherit;
+	border: none;
+	padding: inherit;
+	text-align: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	font-weight: inherit;
+	cursor: pointer;
+
+	&:hover {
+		color: var(--colour-primary);
 	}
 }
 

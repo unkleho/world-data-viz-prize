@@ -27,6 +27,7 @@ export class HomePage extends Component {
 		tooltipX: null,
 		tooltipY: null,
 		tooltipContent: null,
+		insightsQuery: null,
 	};
 
 	async componentDidMount() {
@@ -109,13 +110,31 @@ export class HomePage extends Component {
 		Router.push(url);
 	};
 
-	handleInsightChange = (index, indexLatest, meta) => {
-		console.log(index, indexLatest, meta);
+	// Insights
+
+	handleInsightChange = (index) => {
+		let insightIndex;
+
+		if (index < 0) {
+			insightIndex = 0;
+		} else {
+			insightIndex = index;
+		}
+
+		const query = {
+			// ...this.props.router.query,
+			insight: insightIndex,
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
 	};
 
 	render() {
 		const { router } = this.props;
-		const { query, pathname } = router;
+		let { query } = router;
+		const { pathname } = router;
 		const {
 			data,
 			showTooltip,
@@ -124,13 +143,34 @@ export class HomePage extends Component {
 			tooltipContent,
 		} = this.state;
 
+		// Set up insights
+		const insightIndex =
+			typeof query.insight === 'undefined' ? null : parseInt(query.insight, 10);
+		const insightQuery = insights[insightIndex]
+			? insights[insightIndex].query
+			: {};
+
+		// Work out 'mode'. Set to 'dashboard' if user adjusts indicators or country
+		const mode = query.x || query.y || query.country ? 'dashboard' : 'insight';
+
+		// Build query based on Insight or Dashboard mode
+		query = {
+			...query,
+			...(mode === 'insight' ? insightQuery : {}),
+		};
+
+		// Work out query variables
 		const x = typeof query.x === 'undefined' ? 0 : parseInt(query.x, 10);
 		const y = typeof query.y === 'undefined' ? 1 : parseInt(query.y, 10);
+		const countryId = query.country;
 		const tab = typeof query.tab === 'undefined' ? 0 : parseInt(query.tab, 10);
+
+		// Work out axis name and labels
 		const xName = indicators[x].id;
 		const yName = indicators[y].id;
 		const xLabel = indicators[x].name;
 		const yLabel = indicators[y].name;
+
 		// const flippedURL = `/?${queryString.stringify({
 		// 	...query,
 		// 	x: y,
@@ -165,7 +205,7 @@ export class HomePage extends Component {
 							bottom: 48,
 							left: 48,
 						}}
-						selectedId={query.country}
+						selectedId={countryId}
 						bubbleFill={(d) => {
 							const continent = continents.find((c) => c.name === d.continent);
 							return continent ? continent.colour : null;
@@ -177,7 +217,7 @@ export class HomePage extends Component {
 							// console.log(event);
 
 							// Only show tooltip if not currently selected
-							if (d.id !== query.country) {
+							if (d.id !== countryId) {
 								this.setState({
 									showTooltip: true,
 									tooltipX: event.clientX,
@@ -201,7 +241,7 @@ export class HomePage extends Component {
 						className="home-page__tabs"
 						labels={[
 							'Indicators',
-							`Country${query.country ? ` (${query.country})` : ''}`,
+							`Country${countryId ? ` (${countryId})` : ''}`,
 						]}
 						value={tab}
 						onClick={this.handleTabClick}
@@ -229,7 +269,7 @@ export class HomePage extends Component {
 
 					{tab === 1 && (
 						<CountryCard
-							country={data.find((d) => d.id === query.country)}
+							country={data.find((d) => d.id === countryId)}
 							countries={this.state.countries}
 							data={data}
 							onCountryChange={this.handleCountryChange}
@@ -260,15 +300,27 @@ export class HomePage extends Component {
 				<aside className="home-page__aside">
 					<h1>Insight</h1>
 					<InsightCard
-						index={0}
+						index={insightIndex}
 						insights={insights}
 						onChangeIndex={this.handleInsightChange}
 					/>
+					<button
+						onClick={() => this.handleInsightChange(insightIndex - 1)}
+						disabled={insightIndex === 0}
+					>
+						Prev
+					</button>
+					<button
+						onClick={() => this.handleInsightChange(insightIndex + 1)}
+						disabled={insightIndex + 1 >= insights.length}
+					>
+						Next
+					</button>
 
 					<h1>Country</h1>
 
 					<CountryCard
-						country={data.find((d) => d.id === query.country)}
+						country={data.find((d) => d.id === countryId)}
 						countries={this.state.countries}
 						data={data}
 						onCountryChange={this.handleCountryChange}

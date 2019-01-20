@@ -32,10 +32,10 @@ class InsightCard extends Component {
 					index={index}
 					onChangeIndex={this.handleChangeIndex}
 				>
-					{insights.map((insight) => {
+					{insights.map((insight, i) => {
 						return (
-							<div>
-								{insight.content} {index}
+							<div key={i}>
+								<p>{insight.content}</p>
 							</div>
 						);
 					})}

@@ -167,7 +167,7 @@
 	--line-height-xxs: calc(var(--grid-height) * 1);
 	--line-height-xs: calc(var(--grid-height) * 1);
 	--line-height-sm: calc(var(--grid-height) * 1);
-	--line-height-md: calc(var(--grid-height) * 2);
+	--line-height-md: calc(var(--grid-height) * 1.5);
 	--line-height-lg: calc(var(--grid-height) * 2);
 	--line-height-xlg: calc(var(--grid-height) * 2);
 	--line-height-xxlg: calc(var(--grid-height) * 3);

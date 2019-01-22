@@ -65,6 +65,9 @@ class BubbleChart extends Component {
 							<Fragment>
 								{xDomain.some((d) => typeof d === 'number') && (
 									<VictoryAxis
+										animate={{
+											duration: 500,
+										}}
 										label={xLabel}
 										width={width}
 										height={height}
@@ -80,6 +83,9 @@ class BubbleChart extends Component {
 								{yDomain.some((d) => typeof d === 'number') && (
 									<VictoryAxis
 										dependentAxis
+										animate={{
+											duration: 500,
+										}}
 										label={yLabel}
 										width={width}
 										height={height}

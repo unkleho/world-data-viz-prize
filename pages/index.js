@@ -187,7 +187,11 @@ export class HomePage extends Component {
 		// })}`;
 
 		return (
-			<App className="home-page__app" title="Home" url={router.asPath}>
+			<App
+				className={['home-page__app', `home-page__app--${mode}`].join(' ')}
+				title="Home"
+				url={router.asPath}
+			>
 				<main className="home-page">
 					<h1 className="home-page__title">
 						{mode === 'insight' && (

@@ -197,7 +197,7 @@
    * Borders
    * ------------------------------------------------------------------------ */
 
-	--border-md: 1px solid var(--colour-grey-700);
+	--border-md: 1px solid var(--colour-grey-800);
 	--border-lg: 3px solid var(--colour-grey-300);
 
 	/*

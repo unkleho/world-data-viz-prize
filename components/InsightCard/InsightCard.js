@@ -1,25 +1,8 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-// import dynamic from 'next/dynamic';
 // import SwipeableViews from 'react-swipeable-views';
-// import { Scrollama, Step } from 'react-scrollama';
 
 import './InsightCard.css';
-
-// const Scrollama = dynamic(() => import('react-scrollama/lib/Scrollama'), {
-// 	ssr: false,
-// });
-// const Step = dynamic(() => import('react-scrollama/lib/Step'), {
-// 	ssr: false,
-// });
-
-// let Scrollama;
-// let Step;
-
-// if (process.browser) {
-// 	Scrollama = require('react-scrollama').Scrollama;
-// 	Step = require('react-scrollama').Step;
-// }
 
 class InsightCard extends Component {
 	static propTypes = {
@@ -40,7 +23,6 @@ class InsightCard extends Component {
 		const scrollama = require('scrollama');
 		/* eslint-enable global-require */
 
-		// const scrollThreshold = 0.33;
 		const scroller = scrollama();
 		scroller
 			.setup({
@@ -48,7 +30,7 @@ class InsightCard extends Component {
 				step: '.insight-card__step',
 				offset: 0.8,
 				progress: true,
-				threshold: 10,
+				threshold: 20,
 				container: '.insight-card',
 				// graphic: '.scroll__graphic',
 			})
@@ -58,7 +40,7 @@ class InsightCard extends Component {
 		// .onStepEnter(this.handleScrollStepEnter)
 		// .onStepExit(this.handleScrollStepExit);
 
-		scroller.resize();
+		// scroller.resize();
 	}
 
 	handleChangeIndex = (...args) => {
@@ -93,24 +75,22 @@ class InsightCard extends Component {
 	render() {
 		const { insights, index } = this.props;
 
-		console.log(index, process.browser);
-
 		return (
 			<div className="insight-card">
 				{insights.map((insight, i) => {
 					return (
-						<div className="insight-card__step" key={i}>
+						<div
+							className={[
+								'insight-card__step',
+								i === index ? 'insight-card__step--is-selected' : '',
+							].join(' ')}
+							key={i}
+						>
 							<p>{insight.content}</p>
 						</div>
 					);
 				})}
 
-				{/* <Scrollama>
-					{insights.map((insight, i) => {
-						return <Step data={i}>{insight.content}</Step>;
-						// return null;
-					})}
-				</Scrollama> */}
 				{/* <SwipeableViews
 					enableMouseEvents
 					resistance

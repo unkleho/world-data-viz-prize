@@ -2,18 +2,42 @@
 
 .insight-card {
 	height: 100%;
-
-	/* overflow: auto; */
 }
 
 .insight-card__step {
 	display: flex;
-	align-items: center;
-	height: 100%;
+	align-items: flex-start;
+	height: 14rem;
+	border-left: var(--border-md);
 
 	& p {
-		font-weight: 700;
-		font-size: var(--font-size-lg);
-		line-height: var(--line-height-lg);
+		padding-left: 1rem;
+		color: var(--colour-grey-800);
+		font-weight: 500;
+		font-size: var(--font-size-md);
+		line-height: var(--line-height-md);
+		border-left: 3px solid var(--colour-grey-700);
+		transition: color 0.4s;
 	}
+}
+
+@media (--screen-sm) {
+	.insight-card__step {
+		align-items: center;
+		height: 100%;
+		padding-right: 1rem;
+
+		& p {
+			font-weight: 700;
+			font-size: var(--font-size-lg);
+			line-height: var(--line-height-lg);
+		}
+	}
+}
+
+.insight-card__step--is-selected {
+	& p {
+		color: var(--colour-grey-100);
+	}
+	/* opacity: 1; */
 }

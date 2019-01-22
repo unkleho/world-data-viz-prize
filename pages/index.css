@@ -20,7 +20,7 @@
 }
 
 .home-page__aside {
-	display: none;
+	display: block;
 }
 
 @media (--screen-sm) {
@@ -68,12 +68,13 @@
 }
 
 .home-page__chart {
-	height: calc(100vh - 25rem);
+	height: 15rem;
 	margin-bottom: 1rem;
 }
 
 @media (--screen-sm) {
 	.home-page__chart {
+		height: calc(100vh - 25rem);
 		margin-bottom: var(--spacing-2);
 	}
 }
@@ -103,5 +104,16 @@
 		& .tabs__tab:nth-child(2) {
 			display: none;
 		}
+	}
+}
+
+.home-page__insight-holder {
+	margin-bottom: 1rem;
+	color: var(--colour-grey-200);
+	padding: 1rem;
+	background-color: var(--colour-black);
+
+	& button {
+		width: 50%;
 	}
 }

@@ -30,7 +30,7 @@ class App extends Component {
 				siteName={siteName}
 			>
 				<div className={['app', className || ''].join(' ')}>
-					<Header />
+					<Header pathname={url} />
 					{children}
 				</div>
 			</AppBase>

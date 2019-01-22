@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import Router from 'next/router';
 import * as d3 from 'd3';
 import queryString from 'query-string';
@@ -134,7 +134,7 @@ export class HomePage extends Component {
 	render() {
 		const { router } = this.props;
 		let { query } = router;
-		const { pathname } = router;
+		// const { pathname } = router;
 		const {
 			data,
 			showTooltip,
@@ -151,7 +151,7 @@ export class HomePage extends Component {
 			: {};
 
 		// Work out 'mode'. Set to 'dashboard' if user adjusts indicators or country
-		const mode = query.x || query.y || query.country ? 'dashboard' : 'insight';
+		const mode = insightIndex == null ? 'dashboard' : 'insight';
 
 		// Build query based on Insight or Dashboard mode
 		query = {
@@ -178,14 +178,30 @@ export class HomePage extends Component {
 		// })}`;
 
 		return (
-			<App className="home-page__app" title="Home" url={pathname}>
+			<App className="home-page__app" title="Home" url={router.asPath}>
 				<main className="home-page">
 					<h1 className="home-page__title">
-						What Makes a &lsquo;Good&rsquo; Government?
+						{mode === 'insight' && (
+							<Fragment>Insights</Fragment>
+							// <Fragment>What Makes a &lsquo;Good&rsquo; Government?</Fragment>
+						)}
+
+						{mode === 'dashboard' && <Fragment>Dashboard</Fragment>}
 					</h1>
 
 					<p className="home-page__intro">
-						Explore this dataset of 195 countries and over 30 indicators.
+						{/* {mode === 'insight' && (
+							<Fragment>
+								We'll try to answer this question by using data.
+							</Fragment>
+						)} */}
+
+						{mode === 'dashboard' && (
+							<Fragment>
+								Explore this dataset on &lsquo;good&rsquo; government of 195
+								countries and over 30 indicators.
+							</Fragment>
+						)}
 					</p>
 
 					<br />
@@ -237,44 +253,48 @@ export class HomePage extends Component {
 						onBubbleClick={this.handleBubbleClick}
 					/>
 
-					<Tabs
-						className="home-page__tabs"
-						labels={[
-							'Indicators',
-							`Country${countryId ? ` (${countryId})` : ''}`,
-						]}
-						value={tab}
-						onClick={this.handleTabClick}
-					/>
-
-					{tab === 0 && (
-						<div>
-							<IndicatorsSelectorBox
-								title="X"
-								indicators={indicators}
-								value={x}
-								axis="x"
-								onChange={this.handleSelectChange}
+					{mode === 'dashboard' && (
+						<Fragment>
+							<Tabs
+								className="home-page__tabs"
+								labels={[
+									'Indicators',
+									`Country${countryId ? ` (${countryId})` : ''}`,
+								]}
+								value={tab}
+								onClick={this.handleTabClick}
 							/>
 
-							<IndicatorsSelectorBox
-								title="Y"
-								indicators={indicators}
-								value={y}
-								axis="y"
-								onChange={this.handleSelectChange}
-							/>
-						</div>
-					)}
+							{tab === 0 && (
+								<div>
+									<IndicatorsSelectorBox
+										title="X"
+										indicators={indicators}
+										value={x}
+										axis="x"
+										onChange={this.handleSelectChange}
+									/>
 
-					{tab === 1 && (
-						<CountryCard
-							country={data.find((d) => d.id === countryId)}
-							countries={this.state.countries}
-							data={data}
-							onCountryChange={this.handleCountryChange}
-							onIndicatorClick={this.handleIndicatorClick}
-						/>
+									<IndicatorsSelectorBox
+										title="Y"
+										indicators={indicators}
+										value={y}
+										axis="y"
+										onChange={this.handleSelectChange}
+									/>
+								</div>
+							)}
+
+							{tab === 1 && (
+								<CountryCard
+									country={data.find((d) => d.id === countryId)}
+									countries={this.state.countries}
+									data={data}
+									onCountryChange={this.handleCountryChange}
+									onIndicatorClick={this.handleIndicatorClick}
+								/>
+							)}
+						</Fragment>
 					)}
 
 					{/* eslint-disable jsx-a11y/anchor-is-valid */}
@@ -298,34 +318,44 @@ export class HomePage extends Component {
 				</main>
 
 				<aside className="home-page__aside">
-					<h1>Insight</h1>
-					<InsightCard
-						index={insightIndex}
-						insights={insights}
-						onChangeIndex={this.handleInsightChange}
-					/>
-					<button
-						onClick={() => this.handleInsightChange(insightIndex - 1)}
-						disabled={insightIndex === 0}
-					>
-						Prev
-					</button>
-					<button
-						onClick={() => this.handleInsightChange(insightIndex + 1)}
-						disabled={insightIndex + 1 >= insights.length}
-					>
-						Next
-					</button>
+					{mode === 'insight' && (
+						<div className="home-page__insight-holder">
+							{/* <h1>Insight</h1> */}
+							<InsightCard
+								index={insightIndex}
+								insights={insights}
+								onChangeIndex={this.handleInsightChange}
+							/>
+							<button
+								className="nav-button"
+								onClick={() => this.handleInsightChange(insightIndex - 1)}
+								disabled={insightIndex === 0}
+							>
+								Prev
+							</button>
+							<button
+								className="nav-button"
+								onClick={() => this.handleInsightChange(insightIndex + 1)}
+								disabled={insightIndex + 1 >= insights.length}
+							>
+								Next
+							</button>
+						</div>
+					)}
 
-					<h1>Country</h1>
+					{mode === 'dashboard' && (
+						<Fragment>
+							<h1>Country</h1>
 
-					<CountryCard
-						country={data.find((d) => d.id === countryId)}
-						countries={this.state.countries}
-						data={data}
-						onCountryChange={this.handleCountryChange}
-						onIndicatorClick={this.handleIndicatorClick}
-					/>
+							<CountryCard
+								country={data.find((d) => d.id === countryId)}
+								countries={this.state.countries}
+								data={data}
+								onCountryChange={this.handleCountryChange}
+								onIndicatorClick={this.handleIndicatorClick}
+							/>
+						</Fragment>
+					)}
 				</aside>
 			</App>
 		);

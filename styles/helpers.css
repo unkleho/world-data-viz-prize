@@ -95,3 +95,18 @@
 		line-height: var(--line-height-lg);
 	}
 }
+
+/*
+ * NAV-BUTTON
+ * -------------------------------------------------------------------------- */
+
+.nav-button {
+	padding: 1rem;
+	background-color: transparent;
+	border: none;
+	color: var(--colour-primary);
+
+	&:disabled {
+		color: var(--colour-grey-700);
+	}
+}

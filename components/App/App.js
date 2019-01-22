@@ -30,7 +30,21 @@ class App extends Component {
 				siteName={siteName}
 			>
 				<div className={['app', className || ''].join(' ')}>
-					<Header pathname={url} />
+					<Header
+						// pathname={url}
+						menuItems={[
+							{
+								name: 'Insights',
+								url: '/?insight=0',
+								isActive: url.indexOf('insight=') > -1,
+							},
+							{
+								name: 'Dashboard',
+								url: '/',
+								isActive: url.indexOf('insight=') === -1,
+							},
+						]}
+					/>
 					{children}
 				</div>
 			</AppBase>

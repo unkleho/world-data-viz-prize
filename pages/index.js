@@ -131,6 +131,15 @@ export class HomePage extends Component {
 		Router.push(url);
 	};
 
+	handleInsightStepProgress = (response, insightIndex) => {
+		// const currentInsight = this.props.router.query.insight
+		// console.log(response, insightIndex);
+
+		if (response.index !== insightIndex) {
+			Router.push(`/?insight=${response.index}`);
+		}
+	};
+
 	render() {
 		const { router } = this.props;
 		let { query } = router;
@@ -190,11 +199,9 @@ export class HomePage extends Component {
 					</h1>
 
 					<p className="home-page__intro">
-						{/* {mode === 'insight' && (
-							<Fragment>
-								We'll try to answer this question by using data.
-							</Fragment>
-						)} */}
+						{mode === 'insight' && (
+							<Fragment>What does the data tell us?</Fragment>
+						)}
 
 						{mode === 'dashboard' && (
 							<Fragment>
@@ -209,7 +216,10 @@ export class HomePage extends Component {
 					<Legend data={continents} />
 
 					<BubbleChart
-						className="home-page__chart"
+						className={[
+							'home-page__chart',
+							mode === 'insight' ? 'home-page__chart--full-height' : '',
+						].join(' ')}
 						data={data}
 						xName={xName}
 						yName={yName}
@@ -325,8 +335,11 @@ export class HomePage extends Component {
 								index={insightIndex}
 								insights={insights}
 								onChangeIndex={this.handleInsightChange}
+								onStepProgress={(response) =>
+									this.handleInsightStepProgress(response, insightIndex)
+								}
 							/>
-							<button
+							{/* <button
 								className="nav-button"
 								onClick={() => this.handleInsightChange(insightIndex - 1)}
 								disabled={insightIndex === 0}
@@ -339,7 +352,7 @@ export class HomePage extends Component {
 								disabled={insightIndex + 1 >= insights.length}
 							>
 								Next
-							</button>
+							</button> */}
 						</div>
 					)}
 

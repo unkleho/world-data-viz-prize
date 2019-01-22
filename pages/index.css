@@ -21,6 +21,7 @@
 
 .home-page__aside {
 	display: block;
+	height: calc(100% - 23rem);
 }
 
 @media (--screen-sm) {
@@ -28,7 +29,8 @@
 		display: block;
 		width: calc(33%);
 		height: 100%;
-		overflow: auto;
+
+		/* overflow: auto; */
 		margin-left: 3rem;
 		margin-right: -1rem;
 		padding-right: 1rem;
@@ -77,6 +79,10 @@
 		height: calc(100vh - 25rem);
 		margin-bottom: var(--spacing-2);
 	}
+
+	.home-page__chart--full-height {
+		height: calc(100% - 6rem);
+	}
 }
 
 .home-page__intro {
@@ -108,12 +114,21 @@
 }
 
 .home-page__insight-holder {
+	overflow: auto;
+	height: calc(100%);
 	margin-bottom: 1rem;
 	color: var(--colour-grey-200);
 	padding: 1rem;
-	background-color: var(--colour-black);
+
+	/* background-color: var(--colour-black); */
 
 	& button {
 		width: 50%;
+	}
+}
+
+@media (--screen-sm) {
+	.home-page__insight-holder {
+		height: 100%;
 	}
 }

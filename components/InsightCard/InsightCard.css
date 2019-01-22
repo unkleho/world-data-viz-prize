@@ -1,4 +1,19 @@
 @import '../../styles/variables.css';
 
-/* .insight-card {
-} */
+.insight-card {
+	height: 100%;
+
+	/* overflow: auto; */
+}
+
+.insight-card__step {
+	display: flex;
+	align-items: center;
+	height: 100%;
+
+	& p {
+		font-weight: 700;
+		font-size: var(--font-size-lg);
+		line-height: var(--line-height-lg);
+	}
+}

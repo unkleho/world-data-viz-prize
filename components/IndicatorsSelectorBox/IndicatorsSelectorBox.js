@@ -56,7 +56,7 @@ class IndicatorsSelectorBox extends Component {
 
 				<div className="indicators-selector-box__select-group">
 					<Select
-						className="select"
+						className="select indicators-selector-box__select"
 						classNamePrefix="select"
 						isSearchable={false}
 						// menuIsOpen
@@ -66,7 +66,7 @@ class IndicatorsSelectorBox extends Component {
 							options: options.filter((o) => o.type === group),
 						}))}
 						// menuShouldScrollIntoView={true}
-						maxMenuHeight={500}
+						maxMenuHeight={400}
 						menuPlacement={'top'}
 						theme={(theme) => ({
 							...theme,

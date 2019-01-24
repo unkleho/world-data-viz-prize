@@ -3,10 +3,11 @@
 .country-card {
 	& h2 {
 		margin-bottom: 1rem;
-		color: var(--colour-grey-400);
+		color: var(--colour-grey-500);
 		text-transform: uppercase;
 		font-size: var(--font-size-sm);
 		font-weight: 400;
+		letter-spacing: var(--letter-spacing-lg);
 		line-height: var(--line-height-sm);
 	}
 
@@ -22,6 +23,11 @@
 
 	& hgroup {
 		margin-bottom: 1rem;
+	}
+
+	& > p {
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
 	}
 }
 
@@ -53,7 +59,7 @@
 .country-card__group {
 	margin-bottom: 1rem;
 	padding-top: 0.5rem;
-	border-top: var(--border-md);
+	/* border-top: var(--border-md); */
 
 	/* border-image: linear-gradient(
 		to right,

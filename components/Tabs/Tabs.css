@@ -2,7 +2,7 @@
 
 .tabs {
 	display: flex;
-	border-top: var(--border-md);
+	/* border-top: var(--border-md); */
 
 	/* border-bottom: var(--border-md); */
 
@@ -12,18 +12,38 @@
 
 .tabs__tab {
 	flex: 1;
+	margin-bottom: 0.5rem;
 	padding: 0.75rem;
-	border-bottom: var(--border-md);
-
-	/* border-right: var(--border-md); */
 	font-size: var(--font-size-sm);
 	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-lg);
 	text-align: center;
 	color: var(--colour-grey-400);
 }
 
 .tabs__tab--is-selected {
-	border-bottom: var(--border-lg);
-	font-weight: 700;
+	position: relative;
+	/* font-weight: 700; */
 	color: var(--colour-white);
+
+	&:after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		width: 2rem;
+		height: 6px;
+		margin: 0 auto;
+		border-radius: 6px;
+		background-color: var(--colour-primary);
+	}
+}
+
+@media (--screen-sm) {
+	.tabs__tab--is-selected {
+		&:after {
+			content: none;
+		}
+	}
 }

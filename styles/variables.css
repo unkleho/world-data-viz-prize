@@ -172,6 +172,8 @@
 	--line-height-xlg: calc(var(--grid-height) * 2);
 	--line-height-xxlg: calc(var(--grid-height) * 3);
 
+	--letter-spacing-lg: 0.2em;
+
 	/*
    * Spacing
    * ------------------------------------------------------------------------ */

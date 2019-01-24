@@ -97,6 +97,18 @@
 }
 
 /*
+ * BUTTON
+ * Removes default styling
+ * -------------------------------------------------------------------------- */
+
+.button {
+	padding: inherit;
+	border: inherit;
+	background-color: inherit;
+	color: inherit;
+}
+
+/*
  * NAV-BUTTON
  * -------------------------------------------------------------------------- */
 
@@ -109,11 +121,4 @@
 	&:disabled {
 		color: var(--colour-grey-700);
 	}
-}
-
-/*
- * SUBHEADING
- * -------------------------------------------------------------------------- */
-
-.subheading {
 }

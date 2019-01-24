@@ -19,6 +19,7 @@
 .legend__item {
 	display: flex;
 	flex: 0 0 33%;
+	line-height: 1rem;
 	padding: 0.25rem 0.25rem 0.25rem 0;
 }
 

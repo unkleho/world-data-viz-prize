@@ -45,6 +45,17 @@ export class HomePage extends Component {
 		});
 	}
 
+	handleLegendItemClick = (event, item) => {
+		const query = {
+			...this.props.router.query,
+			continent: item.id,
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
+	};
+
 	handleBubbleClick = (event, data) => {
 		const query = {
 			...this.props.router.query,
@@ -145,7 +156,7 @@ export class HomePage extends Component {
 		let { query } = router;
 		// const { pathname } = router;
 		const {
-			data,
+			data: rawData,
 			showTooltip,
 			tooltipX,
 			tooltipY,
@@ -173,12 +184,20 @@ export class HomePage extends Component {
 		const y = typeof query.y === 'undefined' ? 1 : parseInt(query.y, 10);
 		const countryId = query.country;
 		const tab = typeof query.tab === 'undefined' ? 0 : parseInt(query.tab, 10);
+		// const continentId =
+		// 	typeof query.continent === 'undefined' ? 'all' : query.continent;
 
 		// Work out axis name and labels
 		const xName = indicators[x].id;
 		const yName = indicators[y].id;
 		const xLabel = indicators[x].name;
 		const yLabel = indicators[y].name;
+
+		const data = rawData.filter((d) => {
+			console.log(d);
+
+			return d.continent === 'Africa';
+		});
 
 		// const flippedURL = `/?${queryString.stringify({
 		// 	...query,
@@ -217,7 +236,7 @@ export class HomePage extends Component {
 
 					<br />
 
-					<Legend data={continents} />
+					<Legend data={continents} onItemClick={this.handleLegendItemClick} />
 
 					<BubbleChart
 						className={[

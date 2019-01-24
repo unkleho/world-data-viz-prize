@@ -6,10 +6,17 @@ import './Legend.css';
 class Legend extends Component {
 	static propTypes = {
 		data: PropTypes.array,
+		onItemClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		data: [],
+	};
+
+	handleItemClick = (event, d) => {
+		if (typeof this.props.onItemClick === 'function') {
+			this.props.onItemClick(event, d);
+		}
 	};
 
 	render() {
@@ -19,7 +26,11 @@ class Legend extends Component {
 			<div className="legend">
 				{data.map((d) => {
 					return (
-						<div className="legend__item" key={d.name}>
+						<button
+							className="legend__item button"
+							onClick={(event) => this.handleItemClick(event, d)}
+							key={d.name}
+						>
 							<div
 								className="legend__symbol"
 								style={{
@@ -27,7 +38,7 @@ class Legend extends Component {
 								}}
 							/>
 							{d.name}
-						</div>
+						</button>
 					);
 				})}
 			</div>

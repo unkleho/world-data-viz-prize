@@ -12,8 +12,7 @@
 		"jest": "node -r dotenv/config ./node_modules/.bin/jest",
 		"test": "npm run jest -- --bail --findRelatedTests",
 		"test:watch": "npm run jest -- --watch",
-		"test:lint":
-			"eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
+		"test:lint": "eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
 		"precommit": "lint-staged"
 	},
 	"engines": {
@@ -54,6 +53,7 @@
 		"react-redux": "^5.0.5",
 		"react-select": "^2.2.0",
 		"react-swipeable-views": "^0.13.0",
+		"react-trend": "^1.2.4",
 		"redux": "^3.6.0",
 		"redux-devtools-extension": "^2.13.2",
 		"redux-thunk": "^2.2.0",

@@ -2,9 +2,11 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import CountUp from 'react-countup';
+import Trend from 'react-trend';
 
 import { precision, getCountryRank } from '../../lib/dataUtils';
 import { indicators, indicatorGroups } from '../../lib/data';
+import { colours } from '../../lib/theme';
 import './CountryCard.css';
 
 class CountryCard extends Component {
@@ -83,12 +85,12 @@ class CountryCard extends Component {
 					onChange={this.handleCountryChange}
 				/>
 
-				{!country.id && (
+				{/* {!country.id && (
 					<p>
 						Select a country by using the drop down above, or clicking on a
 						circle.
 					</p>
-				)}
+				)} */}
 
 				{country.id &&
 					countryData.map((group) => {
@@ -114,11 +116,34 @@ class CountryCard extends Component {
 										indicator.isLowerBetter,
 									);
 
+									// console.log(buildTrendData(data, indicator.id));
+
 									return (
 										<div
 											className="country-card__indicator"
 											key={indicator.name}
 										>
+											<button
+												className="button country-card__indicator-icon-button"
+												onClick={() => this.handleIndicatorClick(indicator)}
+											>
+												<svg
+													style={{
+														width: '24px',
+														height: '24px',
+														position: 'relative',
+														display: 'inline-block',
+													}}
+													viewBox="0 0 24 24"
+												>
+													<path
+														fill="#FFFFFF"
+														d="M22,12L18,8V11H3V13H18V16L22,12Z"
+														// transform={axis === 'y' ? 'rotate(-90 12 12)' : ''}
+													/>
+												</svg>
+											</button>
+
 											{/* <button>x</button>
 											<button>y</button> */}
 											<hgroup>
@@ -133,6 +158,7 @@ class CountryCard extends Component {
 												</h3>
 												{indicator.notes && <p>{indicator.notes}</p>}
 											</hgroup>
+
 											<div className="country-card__value">
 												{indicator.format === 'dollar' ? '$' : ''}
 												<CountUp
@@ -143,9 +169,28 @@ class CountryCard extends Component {
 												/>
 												{/* {numberWithCommas(indicator.value)} */}
 												{indicator.format === 'percentage' ? '%' : ''}
-												<p>
-													{rank} of {total}
-												</p>
+
+												<div
+													className="country-card__indicator-trend"
+													title={`${rank} of ${total}`}
+												>
+													<Trend
+														smooth
+														autoDraw
+														autoDrawDuration={2000}
+														data={buildTrendData(data, indicator.id)}
+														gradient={[colours.darkPurple, colours.lightPurple]}
+														strokeWidth={6}
+														radius={10}
+													/>
+
+													<div
+														className="country-card__indicator-trend__line"
+														style={{
+															left: `${(total - rank) / total * 100}%`,
+														}}
+													/>
+												</div>
 											</div>
 										</div>
 									);
@@ -159,3 +204,22 @@ class CountryCard extends Component {
 }
 
 export default CountryCard;
+
+function buildTrendData(data, indicatorId) {
+	return data
+		.map((d) => {
+			return d[indicatorId];
+		})
+		.filter((d) => d !== null)
+		.sort((a, b) => {
+			if (a < b) {
+				return -1;
+			}
+
+			if (a > b) {
+				return 1;
+			}
+
+			return 0;
+		});
+}

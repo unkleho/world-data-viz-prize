@@ -141,6 +141,10 @@
 		color-mod(
 			var(--colour-grey) shade(80%)
 		);
+	--colour-grey-950:
+		color-mod(
+			var(--colour-grey) shade(85%)
+		);
 
 	--colour-grey-light: var(--colour-grey-300);
 	--colour-grey-lighter: var(--colour-grey-100);

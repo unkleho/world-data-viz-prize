@@ -178,6 +178,7 @@
 			padding-left: 0;
 			text-align: left;
 			border-bottom: none;
+			font-weight: 700;
 		}
 
 		& .tabs__tab:nth-child(2) {
@@ -197,5 +198,14 @@
 	.home-page__insight-holder {
 		overflow: auto;
 		height: 100%;
+	}
+
+	.home-page__insight-holder::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.home-page__insight-holder::-webkit-scrollbar-thumb {
+		background-color: var(--colour-grey-700);
+		border-radius: 6px;
 	}
 }

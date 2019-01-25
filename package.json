@@ -7,12 +7,13 @@
 		"build": "next build",
 		"start": "node server.js -p $PORT",
 		"heroku-postbuild": "next build",
-		"deploy": "now",
+		"deploy": "now && now alias wdvp-unkleho.now.sh",
 		"alias": "now alias next-starter-kit.now.sh -r rules.json",
 		"jest": "node -r dotenv/config ./node_modules/.bin/jest",
 		"test": "npm run jest -- --bail --findRelatedTests",
 		"test:watch": "npm run jest -- --watch",
-		"test:lint": "eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
+		"test:lint":
+			"eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
 		"precommit": "lint-staged"
 	},
 	"engines": {

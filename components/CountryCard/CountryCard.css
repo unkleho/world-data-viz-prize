@@ -13,7 +13,7 @@
 
 	& h3 {
 		margin-bottom: 0;
-		color: var(--colour-grey-100);
+		color: var(--colour-grey-300);
 		font-weight: 700;
 		font-size: var(--font-size-sm);
 		line-height: var(--line-height-sm);
@@ -108,11 +108,11 @@
 	}
 }
 
-@media (--screen-lg) {
+/* @media (--screen-lg) {
 	.country-card__indicator {
 		padding-left: 2rem;
 	}
-}
+} */
 
 .country-card__indicator-button {
 	background-color: transparent;

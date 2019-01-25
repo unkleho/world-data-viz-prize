@@ -86,7 +86,7 @@ class InsightCard extends Component {
 							].join(' ')}
 							key={i}
 						>
-							<p>{insight.content}</p>
+							<p dangerouslySetInnerHTML={{ __html: insight.content }} />
 						</div>
 					);
 				})}

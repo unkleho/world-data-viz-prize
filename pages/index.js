@@ -140,9 +140,13 @@ export class HomePage extends Component {
 	};
 
 	handleCountryChange = (value) => {
+		const { country, ...rawQuery } = this.props.router.query;
+		console.log(country);
+
 		const query = {
-			...this.props.router.query,
-			country: value.value,
+			...rawQuery,
+			...(value ? { country: value.value } : {}),
+			// country: value.value,
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -270,7 +274,10 @@ export class HomePage extends Component {
 
 					<p className="home-page__intro">
 						{mode === 'insight' && (
-							<Fragment>What does the data tell us?</Fragment>
+							<Fragment>
+								What makes good government? Let's use data from 195 countries to
+								find out.
+							</Fragment>
 						)}
 
 						{mode === 'dashboard' && (

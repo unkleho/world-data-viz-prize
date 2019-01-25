@@ -28,10 +28,38 @@
 		padding-right: 1rem;
 
 		& p {
-			font-weight: 700;
+			font-weight: 400;
 			font-size: var(--font-size-lg);
 			line-height: var(--line-height-lg);
 		}
+
+		& strong {
+			color: var(--colour-data-1);
+		}
+
+		/* &:nth-child(5n + 2) {
+			& strong {
+				color: var(--colour-data-3);
+			}
+		}
+
+		&:nth-child(5n + 3) {
+			& strong {
+				color: var(--colour-data-4);
+			}
+		}
+
+		&:nth-child(5n + 4) {
+			& strong {
+				color: var(--colour-data-5);
+			}
+		}
+
+		&:nth-child(5n + 5) {
+			& strong {
+				color: var(--colour-data-6);
+			}
+		} */
 	}
 }
 

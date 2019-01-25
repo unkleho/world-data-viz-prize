@@ -8,8 +8,15 @@
    * ------------------------------------------------------------------------ */
 
 	--colour-primary: #d10fc9;
-	--colour-secondary: #f44336;
-	--colour-highlight: #ffc107;
+	--colour-secondary: #5F0FD1;
+	--colour-highlight: #0FA6D1;
+
+	--colour-data-1: var(--colour-primary);
+	--colour-data-2: var(--colour-secondary);
+	--colour-data-3: var(--colour-highlight);
+	--colour-data-4: #0FD165;
+	--colour-data-5: #FFE813;
+	--colour-data-6: #FF5C13;
 
 	--colour-black: black;
 	--colour-grey: #9e9e9e;

@@ -78,6 +78,8 @@ class CountryCard extends Component {
 							primary: '#D10FC9',
 						},
 					})}
+					menuPlacement="auto"
+					isClearable={true}
 					onChange={this.handleCountryChange}
 				/>
 

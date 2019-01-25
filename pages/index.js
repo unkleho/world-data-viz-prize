@@ -339,7 +339,7 @@ export class HomePage extends Component {
 						}}
 						selectedId={countryId}
 						bubbleFill={(d) => {
-							const continent = continents.find((c) => c.name === d.continent);
+							const continent = continents.find((c) => c.id === d.continent);
 							return continent ? continent.colour : null;
 						}}
 						bubbleSelectedText={(d) => {

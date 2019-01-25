@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import arrayDiff from 'simple-array-diff';
 
+import { isNumeric } from '../../lib/numberUtils';
+
 export default class Bubbles extends React.Component {
 	static defaultProps = {
 		data: [],
@@ -43,27 +45,11 @@ export default class Bubbles extends React.Component {
 		const { forceStrength, velocityDecay, center } = props;
 		this.data = [];
 
-		// Set up force simulation
-		this.simulation = d3
-			.forceSimulation()
-			.velocityDecay(velocityDecay)
-			.force(
-				'x',
-				d3
-					.forceX()
-					.strength(forceStrength)
-					.x(center.x),
-			)
-			.force(
-				'y',
-				d3
-					.forceY()
-					.strength(forceStrength)
-					.y(center.y),
-			)
-			// .force('charge', d3.forceManyBody().strength(this.charge.bind(this)))
-			.on('tick', this.ticked.bind(this))
-			.stop();
+		this.setupForceSimulation({
+			forceStrength,
+			velocityDecay,
+			center,
+		});
 
 		this.bubblesRef = React.createRef();
 	}
@@ -79,19 +65,16 @@ export default class Bubbles extends React.Component {
 			});
 
 			diffs.removed.forEach((item) => {
-				const index = diffs.removed.indexOf(item);
+				const index = this.data.findIndex((d) => d.id === item.id);
 				this.data.splice(index, 1);
+				// console.log(item, this.data.length, index);
 			});
 
-			// this.restart();
-			// this.selectItem(this.props.id);
-
 			if (diffs.added.length + diffs.removed.length) {
-				console.log(diffs);
+				console.log(this.data.length, diffs);
 			}
 
-			// this.init(this.props.data);
-			this.setupBubbles(
+			this.restartBubbles(
 				this.props.data,
 				this.props.xName,
 				this.props.yName,
@@ -106,7 +89,7 @@ export default class Bubbles extends React.Component {
 		) {
 			console.log('xName/yName change');
 
-			this.setupBubbles(
+			this.restartBubbles(
 				this.props.data,
 				this.props.xName,
 				this.props.yName,
@@ -119,7 +102,7 @@ export default class Bubbles extends React.Component {
 			console.log('width change', this.props.width);
 			console.log('selectedId change', this.props.selectedId);
 
-			this.setupBubbles(
+			this.restartBubbles(
 				this.props.data,
 				this.props.xName,
 				this.props.yName,
@@ -130,7 +113,7 @@ export default class Bubbles extends React.Component {
 
 		if (prevProps.selectedId !== this.props.selectedId) {
 			console.log('selectedId change', this.props.selectedId);
-			this.setupBubbles(
+			this.restartBubbles(
 				this.props.data,
 				this.props.xName,
 				this.props.yName,
@@ -156,18 +139,42 @@ export default class Bubbles extends React.Component {
 		const { xName, yName, selectedId } = this.props;
 
 		this.data = data || [];
-		this.setupBubbles(this.data, xName, yName, selectedId);
+		this.restartBubbles(this.data, xName, yName, selectedId);
 		this.regroupBubbles();
 	};
 
-	/** Set up bubbles data and enter/exit events */
-	setupBubbles = (data, xName, yName, selectedId = null) => {
-		console.log('setupBubbles', selectedId, data.length);
+	setupForceSimulation = ({ velocityDecay, forceStrength, center }) => {
+		// Set up force simulation
+		this.simulation = d3
+			.forceSimulation()
+			.velocityDecay(velocityDecay)
+			.force(
+				'x',
+				d3
+					.forceX()
+					.strength(forceStrength)
+					.x(center.x),
+			)
+			.force(
+				'y',
+				d3
+					.forceY()
+					.strength(forceStrength)
+					.y(center.y),
+			)
+			// .force('charge', d3.forceManyBody().strength(this.charge.bind(this)))
+			.on('tick', this.ticked.bind(this))
+			.stop();
+	};
 
-		console.log(data, this.data);
+	/** Set up bubbles data and enter/exit events */
+	restartBubbles = (data, xName, yName, selectedId = null) => {
+		console.log('restartBubbles', selectedId, this.data.length);
 
 		// Create selection
-		const bubbles = this.state.g.selectAll('.bubble').data(data, (d) => d.id);
+		const bubbles = this.state.g
+			.selectAll('.bubble')
+			.data(this.data, (d) => d.id);
 
 		// Exit
 		bubbles.exit().remove();
@@ -180,8 +187,8 @@ export default class Bubbles extends React.Component {
 			.append('circle')
 			.attr('id', (d) => d.id)
 			.attr('r', 0)
-			.attr('cx', (d) => d.x)
-			.attr('cy', (d) => d.y)
+			// .attr('cx', (d) => d.x)
+			// .attr('cy', (d) => d.y)
 			.attr('fill', this.bubbleFill)
 			.attr('opacity', this.bubbleOpacity)
 			.call(this.handleBubbleEnter)
@@ -228,7 +235,7 @@ export default class Bubbles extends React.Component {
 			})
 			.on('end', () => {
 				this.simulation
-					.nodes(data)
+					.nodes(this.data)
 					.alpha(1)
 					.restart();
 			});
@@ -263,16 +270,29 @@ export default class Bubbles extends React.Component {
 	};
 
 	regroupBubbles = () => {
-		const { forceStrength, data, xName, yName, padding } = this.props;
+		const {
+			forceStrength,
+			// data,
+			xName,
+			yName,
+			padding,
+		} = this.props;
 		const { width, height } = this.getInnerSize(
 			this.props.width,
 			this.props.height,
 			padding,
 		);
 
+		console.log(
+			'regroupBubbles',
+			this.data.length,
+			this.props.width,
+			this.props.height,
+		);
+
 		// Update scales
 		const { xScale, yScale } = this.getScales(width, height);
-		this.updateScaleDomains(data, xScale, yScale, xName, yName);
+		this.updateScaleDomains(this.data, xScale, yScale, xName, yName);
 
 		// Update bubbles
 		this.state.g.selectAll('.bubble').attr('r', (d) => {
@@ -290,7 +310,9 @@ export default class Bubbles extends React.Component {
 				d3
 					.forceX()
 					.strength(forceStrength)
-					.x((d) => xScale(d[xName])),
+					.x((d) => {
+						return xScale(d[xName]);
+					}),
 			)
 			.force(
 				'y',
@@ -326,10 +348,12 @@ export default class Bubbles extends React.Component {
 	 * @return {void}
 	 */
 	updateScaleDomains = (data, xScale, yScale, xName, yName) => {
+		console.log('udpateScaleDomains', this.data.length);
+
 		if (xScale && yScale) {
 			xScale
 				.domain(
-					d3.extent(data, (d) => {
+					d3.extent(this.data, (d) => {
 						return d[xName];
 					}),
 				)
@@ -337,7 +361,7 @@ export default class Bubbles extends React.Component {
 
 			yScale
 				.domain(
-					d3.extent(data, (d) => {
+					d3.extent(this.data, (d) => {
 						return d[yName];
 					}),
 				)
@@ -367,7 +391,7 @@ export default class Bubbles extends React.Component {
 
 	ticked() {
 		this.state.g.selectAll('.bubble').attr('transform', (d) => {
-			if (typeof d.x === 'number' && typeof d.y === 'number') {
+			if (isNumeric(d.x) && isNumeric(d.y)) {
 				return `translate(${d.x}, ${d.y})`;
 			}
 		});

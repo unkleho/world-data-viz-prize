@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import './BubbleChartWrapper.css';
 
 class BubbleChartWrapper extends Component {
-	// static propTypes = {};
+	static propTypes = {
+		/** Used to trigger resize update */
+		triggerUpdateDimensionsId: PropTypes.string,
+	};
 
 	state = {
 		width: null,
@@ -21,6 +24,15 @@ class BubbleChartWrapper extends Component {
 		window.addEventListener('resize', this.updateDimensions);
 
 		this.updateDimensions();
+	}
+
+	componentDidUpdate(prevProps) {
+		if (
+			prevProps.triggerUpdateDimensionsId !==
+			this.props.triggerUpdateDimensionsId
+		) {
+			this.updateDimensions();
+		}
 	}
 
 	componentWillUnmount() {

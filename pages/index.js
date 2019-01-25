@@ -359,6 +359,7 @@ export class HomePage extends Component {
 							bubbleSelectedText={(d) => {
 								return d.country;
 							}}
+							triggerUpdateDimensionsId={mode}
 							onBubbleMouseover={(event, d) => {
 								// console.log(event);
 

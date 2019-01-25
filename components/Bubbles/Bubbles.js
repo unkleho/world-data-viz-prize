@@ -123,10 +123,6 @@ export default class Bubbles extends React.Component {
 		}
 	}
 
-	componentWillUnmount() {
-		window.removeEventListener('resize', this.updateDimensions);
-	}
-
 	/** Use callback ref to store ref in state */
 	onBubblesGroupRef = (ref) => {
 		this.setState({ g: d3.select(ref) }, () => {

@@ -21,6 +21,7 @@ class BubbleChart extends Component {
 		bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 		bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
 		bubbleSelectedText: PropTypes.func,
+		triggerUpdateDimensionsId: PropTypes.string,
 		onBubbleMouseover: PropTypes.func,
 		onBubbleMouseout: PropTypes.func,
 		onBubbleClick: PropTypes.func,
@@ -43,6 +44,7 @@ class BubbleChart extends Component {
 			selectedId,
 			bubbleFill,
 			bubbleSelectedText,
+			triggerUpdateDimensionsId,
 			onBubbleMouseover,
 			onBubbleMouseout,
 			onBubbleClick,
@@ -57,7 +59,9 @@ class BubbleChart extends Component {
 
 		return (
 			<div className={['bubble-chart', className || ''].join(' ')}>
-				<BubbleChartWrapper>
+				<BubbleChartWrapper
+					triggerUpdateDimensionsId={triggerUpdateDimensionsId}
+				>
 					{(width, height) => {
 						// console.log(width, height);
 

@@ -320,6 +320,7 @@ export class HomePage extends Component {
 										name: 'Small',
 										colour: 'white',
 										isSelected: filter === 'small-only' || filter === 'all',
+										isSmall: true,
 									},
 									{
 										id: 'large-only',

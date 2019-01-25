@@ -35,6 +35,7 @@ class Legend extends Component {
 								'button',
 								'legend__item',
 								d.isSelected ? 'legend__item--is-selected' : '',
+								d.isSmall ? 'legend__item--is-small' : '',
 							].join(' ')}
 							onClick={(event) => this.handleItemClick(event, d)}
 							key={d.id}

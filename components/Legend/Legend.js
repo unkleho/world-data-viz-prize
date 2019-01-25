@@ -29,7 +29,7 @@ class Legend extends Component {
 						<button
 							className="legend__item button"
 							onClick={(event) => this.handleItemClick(event, d)}
-							key={d.name}
+							key={d.id}
 						>
 							<div
 								className="legend__symbol"

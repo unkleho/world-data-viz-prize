@@ -57,6 +57,22 @@ export class HomePage extends Component {
 		const query = {
 			...rawQuery,
 			...(item.id === 'ALL' ? {} : { continent: item.id }),
+			// ...(item.id === 'small-only' ? { filter: 'small-only' } : {}),
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
+	};
+
+	handleFilterItemClick = (event, item) => {
+		/* eslint-disable no-unused-vars */
+		const { filter, ...rawQuery } = this.props.router.query;
+		/* eslint-enable */
+
+		const query = {
+			...rawQuery,
+			...(item.id === 'all-sizes' ? {} : { filter: item.id }),
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -196,6 +212,7 @@ export class HomePage extends Component {
 		const tab = typeof query.tab === 'undefined' ? 0 : parseInt(query.tab, 10);
 		const continentId =
 			typeof query.continent === 'undefined' ? 'all' : query.continent;
+		const filter = typeof query.filter === 'undefined' ? 'all' : query.filter;
 
 		// Work out axis name and labels
 		const xName = indicators[x].id;
@@ -203,10 +220,24 @@ export class HomePage extends Component {
 		const xLabel = indicators[x].name;
 		const yLabel = indicators[y].name;
 
-		// Filter data based on continent
-		const data = rawData.filter((d) => {
-			return continentId === 'all' ? true : d.continentId === continentId;
-		});
+		// Filter data based on continent or country size
+		const data = rawData
+			.filter((d) => {
+				return continentId === 'all' ? true : d.continentId === continentId;
+			})
+			.filter((d) => {
+				// console.log(filter, d.isSmallCountry);
+
+				if (filter === 'small-only') {
+					return d.isSmallCountry;
+					/* eslint-disable */
+				} else if (filter === 'large-only') {
+					return !d.isSmallCountry;
+				}
+				/* eslint-enable */
+
+				return true;
+			});
 
 		// console.log(data);
 
@@ -248,8 +279,36 @@ export class HomePage extends Component {
 					<br />
 
 					<Legend
-						data={[{ id: 'ALL', name: 'All', colour: 'white' }, ...continents]}
-						onItemClick={this.handleLegendItemClick}
+						data={[
+							{ id: 'ALL', name: 'All', colour: 'white' },
+							...continents,
+							{
+								id: 'small-only',
+								name: 'Small Countries Only',
+								colour: 'white',
+							},
+							{
+								id: 'large-only',
+								name: 'Large Countries Only',
+								colour: 'white',
+							},
+							{
+								id: 'all-sizes',
+								name: 'All',
+								colour: 'white',
+							},
+						]}
+						onItemClick={(event, item) => {
+							if (
+								item.id === 'small-only' ||
+								item.id === 'large-only' ||
+								item.id === 'all-sizes'
+							) {
+								this.handleFilterItemClick(event, item);
+							} else {
+								this.handleLegendItemClick(event, item);
+							}
+						}}
 					/>
 
 					<BubbleChart

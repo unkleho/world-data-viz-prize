@@ -45,10 +45,18 @@ export class HomePage extends Component {
 		});
 	}
 
+	// --------------------------------------------------------------------------
+	// Chart Handlers
+	// --------------------------------------------------------------------------
+
 	handleLegendItemClick = (event, item) => {
+		/* eslint-disable no-unused-vars */
+		const { continent, ...rawQuery } = this.props.router.query;
+		/* eslint-enable */
+
 		const query = {
-			...this.props.router.query,
-			continent: item.id,
+			...rawQuery,
+			...(item.id === 'ALL' ? {} : { continent: item.id }),
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -121,7 +129,9 @@ export class HomePage extends Component {
 		Router.push(url);
 	};
 
+	// --------------------------------------------------------------------------
 	// Insights
+	// --------------------------------------------------------------------------
 
 	handleInsightChange = (index) => {
 		let insightIndex;
@@ -184,8 +194,8 @@ export class HomePage extends Component {
 		const y = typeof query.y === 'undefined' ? 1 : parseInt(query.y, 10);
 		const countryId = query.country;
 		const tab = typeof query.tab === 'undefined' ? 0 : parseInt(query.tab, 10);
-		// const continentId =
-		// 	typeof query.continent === 'undefined' ? 'all' : query.continent;
+		const continentId =
+			typeof query.continent === 'undefined' ? 'all' : query.continent;
 
 		// Work out axis name and labels
 		const xName = indicators[x].id;
@@ -193,11 +203,12 @@ export class HomePage extends Component {
 		const xLabel = indicators[x].name;
 		const yLabel = indicators[y].name;
 
+		// Filter data based on continent
 		const data = rawData.filter((d) => {
-			console.log(d);
-
-			return d.continent === 'Africa';
+			return continentId === 'all' ? true : d.continentId === continentId;
 		});
+
+		// console.log(data);
 
 		// const flippedURL = `/?${queryString.stringify({
 		// 	...query,
@@ -236,7 +247,10 @@ export class HomePage extends Component {
 
 					<br />
 
-					<Legend data={continents} onItemClick={this.handleLegendItemClick} />
+					<Legend
+						data={[{ id: 'ALL', name: 'All', colour: 'white' }, ...continents]}
+						onItemClick={this.handleLegendItemClick}
+					/>
 
 					<BubbleChart
 						className={[

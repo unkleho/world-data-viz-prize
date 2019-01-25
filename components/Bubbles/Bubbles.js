@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
+import arrayDiff from 'simple-array-diff';
 
 export default class Bubbles extends React.Component {
 	static defaultProps = {
@@ -40,6 +41,7 @@ export default class Bubbles extends React.Component {
 		super(props);
 
 		const { forceStrength, velocityDecay, center } = props;
+		this.data = [];
 
 		// Set up force simulation
 		this.simulation = d3
@@ -68,10 +70,34 @@ export default class Bubbles extends React.Component {
 
 	componentDidUpdate(prevProps) {
 		if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
-			console.log('data change');
+			console.log('data change', this.props.data.length);
 
-			this.init(this.props.data);
-			// this.regroupBubbles();
+			const diffs = arrayDiff(prevProps.data, this.props.data, 'id');
+
+			diffs.added.forEach((item) => {
+				this.data.push(item);
+			});
+
+			diffs.removed.forEach((item) => {
+				const index = diffs.removed.indexOf(item);
+				this.data.splice(index, 1);
+			});
+
+			// this.restart();
+			// this.selectItem(this.props.id);
+
+			if (diffs.added.length + diffs.removed.length) {
+				console.log(diffs);
+			}
+
+			// this.init(this.props.data);
+			this.setupBubbles(
+				this.props.data,
+				this.props.xName,
+				this.props.yName,
+				this.props.selectedId,
+			);
+			this.regroupBubbles();
 		}
 
 		if (
@@ -129,13 +155,16 @@ export default class Bubbles extends React.Component {
 	init = (data) => {
 		const { xName, yName, selectedId } = this.props;
 
-		this.setupBubbles(data, xName, yName, selectedId);
+		this.data = data || [];
+		this.setupBubbles(this.data, xName, yName, selectedId);
 		this.regroupBubbles();
 	};
 
 	/** Set up bubbles data and enter/exit events */
 	setupBubbles = (data, xName, yName, selectedId = null) => {
-		console.log('setupBubbles', selectedId);
+		console.log('setupBubbles', selectedId, data.length);
+
+		console.log(data, this.data);
 
 		// Create selection
 		const bubbles = this.state.g.selectAll('.bubble').data(data, (d) => d.id);

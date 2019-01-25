@@ -283,7 +283,12 @@ export class HomePage extends Component {
 
 					<br />
 
-					<section className="home-page__chart-holder">
+					<section
+						className={[
+							'home-page__chart-holder',
+							mode === 'insight' ? 'home-page__chart-holder--full-height' : '',
+						].join(' ')}
+					>
 						<div className="home-page__legends">
 							<Legend
 								title="Continents"
@@ -334,10 +339,7 @@ export class HomePage extends Component {
 						</div>
 
 						<BubbleChart
-							className={[
-								'home-page__chart',
-								mode === 'insight' ? 'home-page__chart--full-height' : '',
-							].join(' ')}
+							className={['home-page__chart'].join(' ')}
 							data={data}
 							xName={xName}
 							yName={yName}

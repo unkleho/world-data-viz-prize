@@ -100,6 +100,10 @@
 		display: flex;
 		flex-direction: row-reverse;
 	}
+
+	.home-page__chart-holder--full-height {
+		height: calc(100% - 6rem);
+	}
 }
 
 .home-page__chart {
@@ -115,8 +119,8 @@
 		margin-right: 2rem;
 	}
 
-	.home-page__chart--full-height {
-		height: calc(100% - 8rem);
+	.home-page__chart-holder--full-height .home-page__chart {
+		height: calc(100%);
 	}
 }
 
@@ -129,6 +133,11 @@
 	.home-page__legends {
 		flex-direction: column;
 		justify-content: center;
+	}
+
+	.home-page__chart-holder--full-height .home-page__legends {
+		justify-content: flex-start;
+		padding-top: 3rem;
 	}
 }
 

@@ -280,35 +280,45 @@ export class HomePage extends Component {
 
 					<Legend
 						data={[
-							{ id: 'ALL', name: 'All', colour: 'white' },
-							...continents,
+							{
+								id: 'ALL',
+								name: 'All',
+								colour: 'white',
+								isSelected: continentId === 'all',
+							},
+							...continents.map((continent) => {
+								return {
+									...continent,
+									isSelected:
+										continentId === 'all' || continent.id === continentId,
+								};
+							}),
+						]}
+						onItemClick={this.handleLegendItemClick}
+					/>
+
+					<Legend
+						data={[
+							{
+								id: 'all-sizes',
+								name: 'All',
+								colour: 'white',
+								isSelected: filter === 'all',
+							},
 							{
 								id: 'small-only',
 								name: 'Small Countries Only',
 								colour: 'white',
+								isSelected: filter === 'small-only',
 							},
 							{
 								id: 'large-only',
 								name: 'Large Countries Only',
 								colour: 'white',
-							},
-							{
-								id: 'all-sizes',
-								name: 'All',
-								colour: 'white',
+								isSelected: filter === 'large-only',
 							},
 						]}
-						onItemClick={(event, item) => {
-							if (
-								item.id === 'small-only' ||
-								item.id === 'large-only' ||
-								item.id === 'all-sizes'
-							) {
-								this.handleFilterItemClick(event, item);
-							} else {
-								this.handleLegendItemClick(event, item);
-							}
-						}}
+						onItemClick={this.handleFilterItemClick}
 					/>
 
 					<BubbleChart

@@ -27,7 +27,11 @@ class Legend extends Component {
 				{data.map((d) => {
 					return (
 						<button
-							className="legend__item button"
+							className={[
+								'button',
+								'legend__item',
+								d.isSelected ? 'legend__item--is-selected' : '',
+							].join(' ')}
 							onClick={(event) => this.handleItemClick(event, d)}
 							key={d.id}
 						>

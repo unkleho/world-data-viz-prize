@@ -5,6 +5,8 @@ import './Legend.css';
 
 class Legend extends Component {
 	static propTypes = {
+		className: PropTypes.string,
+		title: PropTypes.string,
 		data: PropTypes.array,
 		onItemClick: PropTypes.func,
 	};
@@ -20,10 +22,12 @@ class Legend extends Component {
 	};
 
 	render() {
-		const { data } = this.props;
+		const { className, data, title } = this.props;
 
 		return (
-			<div className="legend">
+			<div className={['legend', className || ''].join(' ')}>
+				<h1>{title}</h1>
+
 				{data.map((d) => {
 					return (
 						<button

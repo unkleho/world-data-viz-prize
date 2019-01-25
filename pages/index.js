@@ -50,14 +50,14 @@ export class HomePage extends Component {
 	// --------------------------------------------------------------------------
 
 	handleLegendItemClick = (event, item) => {
-		/* eslint-disable no-unused-vars */
 		const { continent, ...rawQuery } = this.props.router.query;
-		/* eslint-enable */
 
+		// Deselect if selected item if clicked
 		const query = {
 			...rawQuery,
-			...(item.id === 'ALL' ? {} : { continent: item.id }),
-			// ...(item.id === 'small-only' ? { filter: 'small-only' } : {}),
+			...(item.id === 'ALL' || item.id === continent
+				? {}
+				: { continent: item.id }),
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -66,13 +66,14 @@ export class HomePage extends Component {
 	};
 
 	handleFilterItemClick = (event, item) => {
-		/* eslint-disable no-unused-vars */
 		const { filter, ...rawQuery } = this.props.router.query;
-		/* eslint-enable */
 
+		// Deselect if selected item if clicked
 		const query = {
 			...rawQuery,
-			...(item.id === 'all-sizes' ? {} : { filter: item.id }),
+			...(item.id === 'all-sizes' || item.id === filter
+				? {}
+				: { filter: item.id }),
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -96,6 +97,10 @@ export class HomePage extends Component {
 		});
 	};
 
+	// --------------------------------------------------------------------------
+	// Indicator Handlers
+	// --------------------------------------------------------------------------
+
 	handleSelectChange = (option, axis) => {
 		const { value } = option;
 
@@ -103,6 +108,19 @@ export class HomePage extends Component {
 			...this.props.router.query,
 			...(axis === 'x' ? { x: value } : {}),
 			...(axis === 'y' ? { y: value } : {}),
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
+	};
+
+	handleIndicatorClick = (indicator) => {
+		const x = indicators.findIndex((ind) => ind.id === indicator.id);
+
+		const query = {
+			...this.props.router.query,
+			x,
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -125,19 +143,6 @@ export class HomePage extends Component {
 		const query = {
 			...this.props.router.query,
 			country: value.value,
-		};
-
-		const url = `/?${queryString.stringify(query)}`;
-
-		Router.push(url);
-	};
-
-	handleIndicatorClick = (indicator) => {
-		const x = indicators.findIndex((ind) => ind.id === indicator.id);
-
-		const query = {
-			...this.props.router.query,
-			x,
 		};
 
 		const url = `/?${queryString.stringify(query)}`;
@@ -278,96 +283,103 @@ export class HomePage extends Component {
 
 					<br />
 
-					<Legend
-						data={[
-							{
-								id: 'ALL',
-								name: 'All',
-								colour: 'white',
-								isSelected: continentId === 'all',
-							},
-							...continents.map((continent) => {
-								return {
-									...continent,
-									isSelected:
-										continentId === 'all' || continent.id === continentId,
-								};
-							}),
-						]}
-						onItemClick={this.handleLegendItemClick}
-					/>
+					<section className="home-page__chart-holder">
+						<div className="home-page__legends">
+							<Legend
+								title="Continents"
+								data={[
+									{
+										id: 'ALL',
+										name: 'All',
+										colour: 'white',
+										isSelected: continentId === 'all',
+									},
+									...continents.map((continent) => {
+										return {
+											...continent,
+											isSelected:
+												continentId === 'all' || continent.id === continentId,
+										};
+									}),
+								]}
+								onItemClick={this.handleLegendItemClick}
+							/>
 
-					<Legend
-						data={[
-							{
-								id: 'all-sizes',
-								name: 'All',
-								colour: 'white',
-								isSelected: filter === 'all',
-							},
-							{
-								id: 'small-only',
-								name: 'Small Countries Only',
-								colour: 'white',
-								isSelected: filter === 'small-only',
-							},
-							{
-								id: 'large-only',
-								name: 'Large Countries Only',
-								colour: 'white',
-								isSelected: filter === 'large-only',
-							},
-						]}
-						onItemClick={this.handleFilterItemClick}
-					/>
+							<Legend
+								className="home-page__legend-country"
+								title="Country Size"
+								data={[
+									{
+										id: 'all-sizes',
+										name: 'All',
+										colour: 'white',
+										isSelected: filter === 'all',
+									},
+									{
+										id: 'small-only',
+										name: 'Small',
+										colour: 'white',
+										isSelected: filter === 'small-only' || filter === 'all',
+									},
+									{
+										id: 'large-only',
+										name: 'Large',
+										colour: 'white',
+										isSelected: filter === 'large-only' || filter === 'all',
+									},
+								]}
+								onItemClick={this.handleFilterItemClick}
+							/>
+						</div>
 
-					<BubbleChart
-						className={[
-							'home-page__chart',
-							mode === 'insight' ? 'home-page__chart--full-height' : '',
-						].join(' ')}
-						data={data}
-						xName={xName}
-						yName={yName}
-						xLabel={xLabel}
-						yLabel={yLabel}
-						padding={{
-							top: 32,
-							right: 16,
-							bottom: 48,
-							left: 48,
-						}}
-						selectedId={countryId}
-						bubbleFill={(d) => {
-							const continent = continents.find((c) => c.id === d.continent);
-							return continent ? continent.colour : null;
-						}}
-						bubbleSelectedText={(d) => {
-							return d.country;
-						}}
-						onBubbleMouseover={(event, d) => {
-							// console.log(event);
+						<BubbleChart
+							className={[
+								'home-page__chart',
+								mode === 'insight' ? 'home-page__chart--full-height' : '',
+							].join(' ')}
+							data={data}
+							xName={xName}
+							yName={yName}
+							xLabel={xLabel}
+							yLabel={yLabel}
+							padding={{
+								top: 32,
+								right: 16,
+								bottom: 48,
+								left: 48,
+							}}
+							selectedId={countryId}
+							bubbleFill={(d) => {
+								const continent = continents.find((c) => c.id === d.continent);
+								return continent ? continent.colour : null;
+							}}
+							bubbleSelectedText={(d) => {
+								return d.country;
+							}}
+							onBubbleMouseover={(event, d) => {
+								// console.log(event);
 
-							// Only show tooltip if not currently selected
-							if (d.id !== countryId) {
+								// Only show tooltip if not currently selected
+								if (d.id !== countryId) {
+									this.setState({
+										showTooltip: true,
+										tooltipX: event.clientX,
+										tooltipY: event.clientY,
+										tooltipContent: d.country,
+									});
+								}
+							}}
+							onBubbleMouseout={() => {
 								this.setState({
-									showTooltip: true,
-									tooltipX: event.clientX,
-									tooltipY: event.clientY,
-									tooltipContent: d.country,
+									showTooltip: false,
+									tooltipX: null,
+									tooltipY: null,
+									tooltipContent: null,
 								});
-							}
-						}}
-						onBubbleMouseout={() => {
-							this.setState({
-								showTooltip: false,
-								tooltipX: null,
-								tooltipY: null,
-								tooltipContent: null,
-							});
-						}}
-						onBubbleClick={this.handleBubbleClick}
-					/>
+							}}
+							onBubbleClick={this.handleBubbleClick}
+						/>
+					</section>
 
 					{mode === 'dashboard' && (
 						<Fragment>

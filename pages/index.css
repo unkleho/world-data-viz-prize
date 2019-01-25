@@ -91,6 +91,17 @@
 	}
 }
 
+.home-page__chart-holder {
+	margin-bottom: 0;
+}
+
+@media (--screen-sm) {
+	.home-page__chart-holder {
+		display: flex;
+		flex-direction: row-reverse;
+	}
+}
+
 .home-page__chart {
 	height: 17rem;
 	padding-bottom: 1rem;
@@ -98,12 +109,43 @@
 
 @media (--screen-sm) {
 	.home-page__chart {
-		height: calc(100vh - 25rem);
-		margin-bottom: var(--spacing-2);
+		flex: 1;
+		height: calc(100vh - 23rem);
+		margin-bottom: 1rem;
+		margin-right: 2rem;
 	}
 
 	.home-page__chart--full-height {
 		height: calc(100% - 8rem);
+	}
+}
+
+.home-page__legends {
+	display: flex;
+	flex-direction: column;
+}
+
+@media (--screen-sm) {
+	.home-page__legends {
+		flex-direction: column;
+		justify-content: center;
+	}
+}
+
+.home-page__legend-country {
+	margin-top: -1.5rem;
+	margin-left: auto;
+	width: 50%;
+
+	& .legend__item {
+		flex: 1;
+	}
+}
+
+@media (--screen-sm) {
+	.home-page__legend-country {
+		margin: inherit;
+		width: inherit;
 	}
 }
 

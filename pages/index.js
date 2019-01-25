@@ -368,7 +368,7 @@ export class HomePage extends Component {
 							}}
 							triggerUpdateDimensionsId={mode}
 							onBubbleMouseover={(event, d) => {
-								// console.log(event);
+								console.log(event);
 
 								// Only show tooltip if not currently selected
 								if (d.id !== countryId) {
@@ -448,12 +448,6 @@ export class HomePage extends Component {
 					</a>
 				</Link> */}
 					{/* eslint-enable jsx-a11y/anchor-is-valid */}
-
-					{showTooltip && (
-						<Tooltip x={tooltipX} y={tooltipY - 30}>
-							{tooltipContent}
-						</Tooltip>
-					)}
 				</main>
 
 				<aside className="home-page__aside">
@@ -499,6 +493,12 @@ export class HomePage extends Component {
 						</Fragment>
 					)}
 				</aside>
+
+				{showTooltip && (
+					<Tooltip x={tooltipX} y={tooltipY - 30}>
+						{tooltipContent}
+					</Tooltip>
+				)}
 			</App>
 		);
 	}

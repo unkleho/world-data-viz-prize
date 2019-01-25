@@ -2,6 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 // import SwipeableViews from 'react-swipeable-views';
 
+import Link from '../Link';
 import './InsightCard.css';
 
 class InsightCard extends Component {
@@ -90,6 +91,46 @@ class InsightCard extends Component {
 						</div>
 					);
 				})}
+
+				<div
+					className={[
+						'insight-card__step',
+						insights.length === index ? 'insight-card__step--is-selected' : '',
+					].join(' ')}
+				>
+					<p>
+						Project by{' '}
+						<strong>
+							<a
+								href="https://www.twitter.com/unkleho"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								Kaho Cheung
+							</a>
+						</strong>{' '}
+						and{' '}
+						<strong>
+							{' '}
+							<a
+								href="https://www.twitter.com/sunanda_creagh"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								Sunanda Creagh
+							</a>
+						</strong>.
+						<br />
+						<br />
+						Continue exploring this dataset:
+						<br />
+						<Link to="/">
+							{/* eslint-disable */}
+							<a className="cta-button">Dashboard</a>
+							{/* eslint-enable */}
+						</Link>
+					</p>
+				</div>
 
 				{/* <SwipeableViews
 					enableMouseEvents

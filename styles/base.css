@@ -95,6 +95,11 @@ a:visited {
 	text-decoration: none;
 }
 
+a:hover,
+a:active {
+	color: var(--colour-secondary);
+}
+
 section {
 	margin-bottom: var(--spacing-2);
 }

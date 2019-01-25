@@ -107,6 +107,11 @@
 	background-color: inherit;
 	color: inherit;
 	cursor: pointer;
+
+	&:focus {
+		outline-width: 1px;
+		outline-color: var(--colour-primary);
+	}
 }
 
 /*
@@ -121,5 +126,30 @@
 
 	&:disabled {
 		color: var(--colour-grey-700);
+	}
+}
+
+/*
+ * CTA-BUTTON
+ * -------------------------------------------------------------------------- */
+
+.cta-button {
+	padding: 0.5rem;
+	background-color: var(--colour-primary);
+	border-radius: 6px;
+	color: var(--colour-white);
+	font-size: var(--font-size-sm);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-lg);
+
+	&:link,
+	&:visited {
+		color: var(--colour-white);
+	}
+
+	&:hover,
+	&:active {
+		background-color: var(--colour-secondary);
 	}
 }

@@ -16,7 +16,7 @@
 	& a {
 		/* margin-right: var(--spacing-1); */
 		padding: 0 1rem;
-		color: var(--colour-grey-600);
+		color: var(--colour-grey-500);
 		font-size: var(--font-size-sm);
 		line-height: 2rem;
 

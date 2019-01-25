@@ -173,7 +173,16 @@ export default class Bubbles extends React.Component {
 			.data(this.data, (d) => d.id);
 
 		// Exit
-		bubbles.exit().remove();
+		bubbles
+			.exit()
+			.selectAll('circle')
+			.transition()
+			.duration(1000)
+			.attr('r', 0)
+			.select(function() {
+				return this.parentNode;
+			})
+			.remove();
 
 		// Enter
 		const bubblesE = bubbles
@@ -344,7 +353,7 @@ export default class Bubbles extends React.Component {
 	 * @return {void}
 	 */
 	updateScaleDomains = (data, xScale, yScale, xName, yName) => {
-		console.log('udpateScaleDomains', this.data.length);
+		// console.log('udpateScaleDomains', this.data.length);
 
 		if (xScale && yScale) {
 			xScale

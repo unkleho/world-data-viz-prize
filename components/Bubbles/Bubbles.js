@@ -207,7 +207,9 @@ export default class Bubbles extends React.Component {
 			.exit()
 			.selectAll('circle')
 			.transition()
-			.duration(1000)
+			.duration((d) => {
+				return 500 + d.country.length * 100;
+			})
 			.attr('r', 0)
 			.select(function() {
 				return this.parentNode;
@@ -245,7 +247,9 @@ export default class Bubbles extends React.Component {
 		bubblesE
 			.selectAll('circle')
 			.transition()
-			.duration(2000)
+			.duration((d) => {
+				return 1300 + d.country.length * 100;
+			})
 			.attr('r', this.bubbleRadius)
 			// .attr('r', (d) => {
 			// 	if (!d[xName] || !d[yName]) {
@@ -453,8 +457,9 @@ export default class Bubbles extends React.Component {
 
 	charge(d) {
 		const radius = this.bubbleRadius(d);
+		const modifier = this.props.height > 300 ? 2.7 : 2.0;
 
-		return -this.props.forceStrength * radius ** 2.0;
+		return -this.props.forceStrength * radius ** modifier;
 	}
 
 	// --------------------------------------------------------------------------

@@ -32,6 +32,10 @@ export class HomePage extends Component {
 	};
 
 	async componentDidMount() {
+		// if (this.props.router.route === '/') {
+		// 	Router.push('/?mode=insights&insight=0');
+		// }
+
 		const rawData = await d3.csv('./static/data.csv');
 		const data = processData(rawData);
 
@@ -195,6 +199,7 @@ export class HomePage extends Component {
 
 		const query = {
 			// ...this.props.router.query,
+			mode: 'insights',
 			insight: insightIndex,
 		};
 
@@ -208,7 +213,7 @@ export class HomePage extends Component {
 		// console.log(response, insightIndex);
 
 		if (response.index !== insightIndex) {
-			Router.push(`/?insight=${response.index}`);
+			Router.push(`/?mode=insights&insight=${response.index}`);
 		}
 	};
 

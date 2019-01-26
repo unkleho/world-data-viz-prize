@@ -34,14 +34,14 @@ class App extends Component {
 						// pathname={url}
 						menuItems={[
 							{
-								name: 'Insights',
-								url: '/?insight=0',
-								isActive: url.indexOf('insight=') > -1,
+								name: 'Dashboard',
+								url: '/?mode=dashboard',
+								isActive: url.indexOf('insight=') === -1,
 							},
 							{
-								name: 'Dashboard',
-								url: '/',
-								isActive: url.indexOf('insight=') === -1,
+								name: 'Insights',
+								url: '/?mode=insights&insight=0',
+								isActive: url.indexOf('insight=') > -1,
 							},
 						]}
 					/>

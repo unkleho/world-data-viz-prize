@@ -31,7 +31,7 @@ class InsightCard extends Component {
 				step: '.insight-card__step',
 				offset: 0.8,
 				progress: true,
-				threshold: 20,
+				threshold: 30,
 				container: '.insight-card',
 				// graphic: '.scroll__graphic',
 			})
@@ -122,11 +122,9 @@ class InsightCard extends Component {
 						</strong>.
 						<br />
 						<br />
-						Continue exploring this dataset:
-						<br />
 						<Link to="/">
 							{/* eslint-disable */}
-							<a className="cta-button">Dashboard</a>
+							<a className="cta-button">Explore this Dataset</a>
 							{/* eslint-enable */}
 						</Link>
 					</p>

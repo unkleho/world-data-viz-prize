@@ -18,10 +18,13 @@ class BubbleChart extends Component {
 		yLabel: PropTypes.string,
 		padding: PropTypes.object,
 		selectedId: PropTypes.string,
+		bubbleRadius: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 		bubbleFill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 		bubbleOpacity: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
 		bubbleSelectedText: PropTypes.func,
 		triggerUpdateDimensionsId: PropTypes.string,
+		isCenter: PropTypes.bool,
+		isRepel: PropTypes.bool,
 		onBubbleMouseover: PropTypes.func,
 		onBubbleMouseout: PropTypes.func,
 		onBubbleClick: PropTypes.func,
@@ -42,9 +45,12 @@ class BubbleChart extends Component {
 			yLabel,
 			padding,
 			selectedId,
+			bubbleRadius,
 			bubbleFill,
 			bubbleSelectedText,
 			triggerUpdateDimensionsId,
+			isCenter,
+			isRepel,
 			onBubbleMouseover,
 			onBubbleMouseout,
 			onBubbleClick,
@@ -76,6 +82,20 @@ class BubbleChart extends Component {
 										width={width}
 										height={height}
 										domain={xDomain}
+										style={{
+											axis: {
+												opacity: isCenter ? 0 : 1,
+											},
+											grid: {
+												opacity: isCenter ? 0 : 1,
+											},
+											tickLabels: {
+												opacity: isCenter ? 0 : 1,
+											},
+											ticks: {
+												opacity: isCenter ? 0 : 1,
+											},
+										}}
 										theme={victoryTheme}
 										padding={padding}
 										offsetY={padding.bottom}
@@ -96,10 +116,20 @@ class BubbleChart extends Component {
 										domain={yDomain}
 										// NOTE: Stylelint don't like this, so this file has been ignored
 										style={{
+											axis: {
+												opacity: isCenter ? 0 : 1,
+											},
+											grid: {
+												opacity: isCenter ? 0 : 1,
+											},
 											tickLabels: {
+												opacity: isCenter ? 0 : 1,
 												angle: -90,
 												textAnchor: 'middle',
 												padding: 9,
+											},
+											ticks: {
+												opacity: isCenter ? 0 : 1,
 											},
 										}}
 										theme={victoryTheme}
@@ -117,10 +147,13 @@ class BubbleChart extends Component {
 									width={width}
 									height={height}
 									padding={padding}
+									bubbleRadius={bubbleRadius}
 									bubbleFill={bubbleFill}
 									bubbleOpacity={0.75}
 									bubbleSelectedText={bubbleSelectedText}
 									selectedId={selectedId}
+									isCenter={isCenter}
+									isRepel={isRepel}
 									onBubbleMouseover={onBubbleMouseover}
 									onBubbleMouseout={onBubbleMouseout}
 									onBubbleClick={onBubbleClick}

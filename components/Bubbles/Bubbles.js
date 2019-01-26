@@ -28,6 +28,9 @@ export default class Bubbles extends React.Component {
 		xName: null,
 		yName: null,
 		selectedId: null,
+		isCenter: true, // Overrides values and forces bubbles to go to middle
+		isRepel: true,
+		bubbleRadius: 4,
 	};
 
 	state = {
@@ -42,13 +45,14 @@ export default class Bubbles extends React.Component {
 	constructor(props) {
 		super(props);
 
-		const { forceStrength, velocityDecay, center } = props;
+		const { forceStrength, velocityDecay, center, isRepel } = props;
 		this.data = [];
 
 		this.setupForceSimulation({
 			forceStrength,
 			velocityDecay,
 			center,
+			isRepel,
 		});
 
 		this.bubblesRef = React.createRef();
@@ -98,9 +102,11 @@ export default class Bubbles extends React.Component {
 			this.regroupBubbles();
 		}
 
-		if (prevProps.width !== this.props.width) {
-			console.log('width change', this.props.width);
-			console.log('selectedId change', this.props.selectedId);
+		if (
+			prevProps.width !== this.props.width ||
+			prevProps.height !== this.props.height
+		) {
+			console.log('width/height change', this.props.width, this.props.height);
 
 			this.restartBubbles(
 				this.props.data,
@@ -113,6 +119,21 @@ export default class Bubbles extends React.Component {
 
 		if (prevProps.selectedId !== this.props.selectedId) {
 			console.log('selectedId change', this.props.selectedId);
+			this.restartBubbles(
+				this.props.data,
+				this.props.xName,
+				this.props.yName,
+				this.props.selectedId,
+			);
+			this.regroupBubbles();
+		}
+
+		if (
+			prevProps.isCenter !== this.props.isCenter ||
+			prevProps.isRepel !== this.props.isRepel
+		) {
+			console.log('isCenter/isRepel change');
+
 			this.restartBubbles(
 				this.props.data,
 				this.props.xName,
@@ -139,7 +160,16 @@ export default class Bubbles extends React.Component {
 		this.regroupBubbles();
 	};
 
-	setupForceSimulation = ({ velocityDecay, forceStrength, center }) => {
+	setupForceSimulation = ({
+		velocityDecay,
+		forceStrength,
+		center,
+		isRepel,
+	}) => {
+		const forceManyBody = isRepel
+			? d3.forceManyBody().strength(this.charge.bind(this))
+			: null;
+
 		// Set up force simulation
 		this.simulation = d3
 			.forceSimulation()
@@ -158,7 +188,7 @@ export default class Bubbles extends React.Component {
 					.strength(forceStrength)
 					.y(center.y),
 			)
-			// .force('charge', d3.forceManyBody().strength(this.charge.bind(this)))
+			.force('charge', forceManyBody)
 			.on('tick', this.ticked.bind(this))
 			.stop();
 	};
@@ -216,18 +246,18 @@ export default class Bubbles extends React.Component {
 			.selectAll('circle')
 			.transition()
 			.duration(2000)
-			.attr('r', (d) => {
-				if (!d[xName] || !d[yName]) {
-					return 0;
-				}
+			.attr('r', this.bubbleRadius)
+			// .attr('r', (d) => {
+			// 	if (!d[xName] || !d[yName]) {
+			// 		return 0;
+			// 	}
 
-				if (d.id === selectedId) {
-					return 11;
-					// return 50;
-				}
+			// 	if (d.id === selectedId) {
+			// 		return 11;
+			// 	}
 
-				return d.radius;
-			})
+			// 	return d.radius;
+			// })
 			.attr('stroke', (d) => {
 				if (d.id === selectedId) {
 					return 'white';
@@ -281,6 +311,8 @@ export default class Bubbles extends React.Component {
 			xName,
 			yName,
 			padding,
+			isCenter,
+			isRepel,
 		} = this.props;
 		const { width, height } = this.getInnerSize(
 			this.props.width,
@@ -300,13 +332,19 @@ export default class Bubbles extends React.Component {
 		this.updateScaleDomains(this.data, xScale, yScale, xName, yName);
 
 		// Update bubbles
-		this.state.g.selectAll('.bubble').attr('r', (d) => {
-			if (!d[xName] || !d[yName]) {
-				return 0;
-			}
+		this.state.g.selectAll('.bubble').attr('r', this.bubbleRadius);
+		// .attr('r', (d) => {
+		// 	if (!d[xName] || !d[yName]) {
+		// 		return 0;
+		// 	}
 
-			return d.radius;
-		});
+		// 	return d.radius;
+		// });
+
+		// TODO: this is duplicate code!
+		const forceManyBody = isRepel
+			? d3.forceManyBody().strength(this.charge.bind(this))
+			: null;
 
 		// if (groupByYear) {
 		this.simulation
@@ -316,6 +354,10 @@ export default class Bubbles extends React.Component {
 					.forceX()
 					.strength(forceStrength)
 					.x((d) => {
+						if (isCenter) {
+							return width / 2;
+						}
+
 						return xScale(d[xName]);
 					}),
 			)
@@ -324,8 +366,15 @@ export default class Bubbles extends React.Component {
 				d3
 					.forceY()
 					.strength(forceStrength)
-					.y((d) => yScale(d[yName])),
-			);
+					.y((d) => {
+						if (isCenter) {
+							return height / 2;
+						}
+
+						return yScale(d[yName]);
+					}),
+			)
+			.force('charge', forceManyBody);
 
 		this.simulation.alpha(1).restart();
 	};
@@ -403,12 +452,25 @@ export default class Bubbles extends React.Component {
 	}
 
 	charge(d) {
-		return -this.props.forceStrength * d.radius ** 2.0;
+		const radius = this.bubbleRadius(d);
+
+		return -this.props.forceStrength * radius ** 2.0;
 	}
 
 	// --------------------------------------------------------------------------
 	// Bubble Appearance
 	// --------------------------------------------------------------------------
+
+	/** Set bubble fill colour */
+	bubbleRadius = (d) => {
+		if (typeof this.props.bubbleRadius === 'function') {
+			return this.props.bubbleRadius(d);
+		}
+
+		if (typeof this.props.bubbleRadius === 'number') {
+			return this.props.bubbleRadius;
+		}
+	};
 
 	/** Set bubble fill colour */
 	bubbleFill = (d) => {
@@ -482,7 +544,7 @@ export default class Bubbles extends React.Component {
 				ref={this.onBubblesGroupRef}
 				className="bubbles__group"
 				style={{
-					transform: `translate(${padding.left}px, ${padding.top}px)`,
+					transform: `translate3d(${padding.left}px, ${padding.top}px, 0)`,
 				}}
 			/>
 		);

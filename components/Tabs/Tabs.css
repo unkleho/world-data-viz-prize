@@ -2,6 +2,7 @@
 
 .tabs {
 	display: flex;
+
 	/* border-top: var(--border-md); */
 
 	/* border-bottom: var(--border-md); */
@@ -23,10 +24,11 @@
 
 .tabs__tab--is-selected {
 	position: relative;
+
 	/* font-weight: 700; */
 	color: var(--colour-white);
 
-	&:after {
+	&::after {
 		content: '';
 		position: absolute;
 		left: 0;
@@ -42,7 +44,7 @@
 
 @media (--screen-sm) {
 	.tabs__tab--is-selected {
-		&:after {
+		&::after {
 			content: none;
 		}
 	}

@@ -8,6 +8,7 @@
 	display: flex;
 	align-items: flex-start;
 	height: 14rem;
+	padding-top: 1rem;
 	border-left: var(--border-md);
 
 	& p {
@@ -18,6 +19,10 @@
 		line-height: var(--line-height-md);
 		border-left: 3px solid var(--colour-grey-700);
 		transition: color 0.4s;
+	}
+
+	& strong {
+		color: var(--colour-data-1);
 	}
 }
 
@@ -31,10 +36,6 @@
 			font-weight: 400;
 			font-size: var(--font-size-lg);
 			line-height: var(--line-height-lg);
-		}
-
-		& strong {
-			color: var(--colour-data-1);
 		}
 
 		/* &:nth-child(5n + 2) {
@@ -67,5 +68,6 @@
 	& p {
 		color: var(--colour-grey-100);
 	}
+
 	/* opacity: 1; */
 }

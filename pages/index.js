@@ -28,6 +28,7 @@ export class HomePage extends Component {
 		tooltipY: null,
 		tooltipContent: null,
 		insightsQuery: null,
+		triggerUpdateDimensionsId: 0,
 	};
 
 	async componentDidMount() {
@@ -44,6 +45,12 @@ export class HomePage extends Component {
 			),
 		});
 	}
+
+	// componentDidUpdate(prevProps) {
+	// 	console.log(prevProps.router.query, this.props.router.query.hide);
+	// 	// if (prevProps.router.query.hide !== this.props.router.query.hide) {
+	// 	// }
+	// }
 
 	// --------------------------------------------------------------------------
 	// Chart Handlers
@@ -154,6 +161,25 @@ export class HomePage extends Component {
 		Router.push(url);
 	};
 
+	handleHideUIButton = () => {
+		const { hide, ...rawQuery } = this.props.router.query;
+
+		const query = {
+			...rawQuery,
+			...(hide === '1' ? {} : { hide: '1' }),
+		};
+
+		const url = `/?${queryString.stringify(query)}`;
+
+		Router.push(url);
+
+		setTimeout(() => {
+			this.setState({
+				triggerUpdateDimensionsId: this.state.triggerUpdateDimensionsId + 1,
+			});
+		}, 300);
+	};
+
 	// --------------------------------------------------------------------------
 	// Insights
 	// --------------------------------------------------------------------------
@@ -196,6 +222,7 @@ export class HomePage extends Component {
 			tooltipX,
 			tooltipY,
 			tooltipContent,
+			triggerUpdateDimensionsId,
 		} = this.state;
 
 		// Set up insights
@@ -222,6 +249,9 @@ export class HomePage extends Component {
 		const continentId =
 			typeof query.continent === 'undefined' ? 'all' : query.continent;
 		const filter = typeof query.filter === 'undefined' ? 'all' : query.filter;
+		const isCenter = query.isCenter === true;
+		const isRepel = query.isRepel === true;
+		const shouldHideUI = query.hide === '1';
 
 		// Work out axis name and labels
 		const xName = indicators[x].id;
@@ -269,7 +299,19 @@ export class HomePage extends Component {
 							// <Fragment>What Makes a &lsquo;Good&rsquo; Government?</Fragment>
 						)}
 
-						{mode === 'dashboard' && <Fragment>Dashboard</Fragment>}
+						{mode === 'dashboard' && (
+							<Fragment>
+								Dashboard {/* eslint-disable */}
+								<a
+									className="button home-page__hide-button"
+									onClick={this.handleHideUIButton}
+									title="Hide Country and Indicators selectors"
+								>
+									{shouldHideUI ? 'Show selectors' : 'Hide selectors'}
+								</a>
+								{/* eslint-enable */}
+							</Fragment>
+						)}
 					</h1>
 
 					<p className="home-page__intro">
@@ -293,7 +335,9 @@ export class HomePage extends Component {
 					<section
 						className={[
 							'home-page__chart-holder',
-							mode === 'insight' ? 'home-page__chart-holder--full-height' : '',
+							mode === 'insight' || shouldHideUI
+								? 'home-page__chart-holder--full-height'
+								: '',
 						].join(' ')}
 					>
 						<div className="home-page__legends">
@@ -355,10 +399,25 @@ export class HomePage extends Component {
 							padding={{
 								top: 32,
 								right: 16,
-								bottom: 48,
-								left: 48,
+								bottom: isCenter ? 32 : 48,
+								left: isCenter ? 16 : 48,
 							}}
 							selectedId={countryId}
+							bubbleRadius={(d) => {
+								if (!d[xName] || !d[yName]) {
+									return 0;
+								}
+
+								if (d.id === countryId) {
+									return 11;
+								}
+
+								// if (isCenter) {
+								// 	return 8;
+								// }
+
+								return d.isSmallCountry ? 6 : 8;
+							}}
 							bubbleFill={(d) => {
 								const continent = continents.find((c) => c.id === d.continent);
 								return continent ? continent.colour : null;
@@ -366,7 +425,9 @@ export class HomePage extends Component {
 							bubbleSelectedText={(d) => {
 								return d.country;
 							}}
-							triggerUpdateDimensionsId={mode}
+							triggerUpdateDimensionsId={triggerUpdateDimensionsId}
+							isCenter={isCenter}
+							isRepel={isRepel}
 							onBubbleMouseover={(event, d) => {
 								console.log(event);
 
@@ -392,49 +453,50 @@ export class HomePage extends Component {
 						/>
 					</section>
 
-					{mode === 'dashboard' && (
-						<Fragment>
-							<Tabs
-								className="home-page__tabs"
-								labels={[
-									'Indicators',
-									`Country${countryId ? ` (${countryId})` : ''}`,
-								]}
-								value={tab}
-								onClick={this.handleTabClick}
-							/>
-
-							{tab === 0 && (
-								<div>
-									<IndicatorsSelectorBox
-										title="X"
-										indicators={indicators}
-										value={x}
-										axis="x"
-										onChange={this.handleSelectChange}
-									/>
-
-									<IndicatorsSelectorBox
-										title="Y"
-										indicators={indicators}
-										value={y}
-										axis="y"
-										onChange={this.handleSelectChange}
-									/>
-								</div>
-							)}
-
-							{tab === 1 && (
-								<CountryCard
-									country={data.find((d) => d.id === countryId)}
-									countries={this.state.countries}
-									data={data}
-									onCountryChange={this.handleCountryChange}
-									onIndicatorClick={this.handleIndicatorClick}
+					{mode === 'dashboard' &&
+						!shouldHideUI && (
+							<Fragment>
+								<Tabs
+									className="home-page__tabs"
+									labels={[
+										'Indicators',
+										`Country${countryId ? ` (${countryId})` : ''}`,
+									]}
+									value={tab}
+									onClick={this.handleTabClick}
 								/>
-							)}
-						</Fragment>
-					)}
+
+								{tab === 0 && (
+									<div>
+										<IndicatorsSelectorBox
+											title="X"
+											indicators={indicators}
+											value={x}
+											axis="x"
+											onChange={this.handleSelectChange}
+										/>
+
+										<IndicatorsSelectorBox
+											title="Y"
+											indicators={indicators}
+											value={y}
+											axis="y"
+											onChange={this.handleSelectChange}
+										/>
+									</div>
+								)}
+
+								{tab === 1 && (
+									<CountryCard
+										country={data.find((d) => d.id === countryId)}
+										countries={this.state.countries}
+										data={data}
+										onCountryChange={this.handleCountryChange}
+										onIndicatorClick={this.handleIndicatorClick}
+									/>
+								)}
+							</Fragment>
+						)}
 
 					{/* eslint-disable jsx-a11y/anchor-is-valid */}
 					{/* <Link route={flippedURL}>
@@ -450,19 +512,20 @@ export class HomePage extends Component {
 					{/* eslint-enable jsx-a11y/anchor-is-valid */}
 				</main>
 
-				<aside className="home-page__aside">
-					{mode === 'insight' && (
-						<div className="home-page__insight-holder">
-							{/* <h1>Insight</h1> */}
-							<InsightCard
-								index={insightIndex}
-								insights={insights}
-								onChangeIndex={this.handleInsightChange}
-								onStepProgress={(response) =>
-									this.handleInsightStepProgress(response, insightIndex)
-								}
-							/>
-							{/* <button
+				{!shouldHideUI && (
+					<aside className="home-page__aside">
+						{mode === 'insight' && (
+							<div className="home-page__insight-holder">
+								{/* <h1>Insight</h1> */}
+								<InsightCard
+									index={insightIndex}
+									insights={insights}
+									onChangeIndex={this.handleInsightChange}
+									onStepProgress={(response) =>
+										this.handleInsightStepProgress(response, insightIndex)
+									}
+								/>
+								{/* <button
 								className="nav-button"
 								onClick={() => this.handleInsightChange(insightIndex - 1)}
 								disabled={insightIndex === 0}
@@ -476,23 +539,24 @@ export class HomePage extends Component {
 							>
 								Next
 							</button> */}
-						</div>
-					)}
+							</div>
+						)}
 
-					{mode === 'dashboard' && (
-						<Fragment>
-							<h1>Country</h1>
+						{mode === 'dashboard' && (
+							<Fragment>
+								<h1>Country</h1>
 
-							<CountryCard
-								country={data.find((d) => d.id === countryId)}
-								countries={this.state.countries}
-								data={data}
-								onCountryChange={this.handleCountryChange}
-								onIndicatorClick={this.handleIndicatorClick}
-							/>
-						</Fragment>
-					)}
-				</aside>
+								<CountryCard
+									country={data.find((d) => d.id === countryId)}
+									countries={this.state.countries}
+									data={data}
+									onCountryChange={this.handleCountryChange}
+									onIndicatorClick={this.handleIndicatorClick}
+								/>
+							</Fragment>
+						)}
+					</aside>
+				)}
 
 				{showTooltip && (
 					<Tooltip x={tooltipX} y={tooltipY - 30}>

@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "node server.js -p $PORT",
 		"heroku-postbuild": "next build",
-		"deploy": "now && now alias goodgov.now.sh",
+		"deploy": "now --dotenv=.env.production && now alias goodgov.now.sh",
 		"alias": "now alias next-starter-kit.now.sh -r rules.json",
 		"jest": "node -r dotenv/config ./node_modules/.bin/jest",
 		"test": "npm run jest -- --bail --findRelatedTests",

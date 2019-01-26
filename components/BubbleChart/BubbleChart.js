@@ -78,7 +78,7 @@ class BubbleChart extends Component {
 										animate={{
 											duration: 500,
 										}}
-										label={xLabel}
+										label={isCenter ? '' : xLabel}
 										width={width}
 										height={height}
 										domain={xDomain}

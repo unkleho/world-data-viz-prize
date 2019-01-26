@@ -47,7 +47,7 @@ export class HomePage extends Component {
 	}
 
 	// componentDidUpdate(prevProps) {
-	// 	console.log(prevProps.router.query, this.props.router.query.hide);
+	// 	console.log(prevProps.router.query, this.props.router.query);
 	// 	// if (prevProps.router.query.hide !== this.props.router.query.hide) {
 	// 	// }
 	// }
@@ -425,7 +425,7 @@ export class HomePage extends Component {
 							bubbleSelectedText={(d) => {
 								return d.country;
 							}}
-							triggerUpdateDimensionsId={triggerUpdateDimensionsId}
+							triggerUpdateDimensionsId={`${triggerUpdateDimensionsId}-${mode}`}
 							isCenter={isCenter}
 							isRepel={isRepel}
 							onBubbleMouseover={(event, d) => {

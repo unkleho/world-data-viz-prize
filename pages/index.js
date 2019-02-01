@@ -29,6 +29,8 @@ export class HomePage extends Component {
 		tooltipContent: null,
 		insightsQuery: null,
 		triggerUpdateDimensionsId: 0,
+		width: null,
+		height: null,
 	};
 
 	async componentDidMount() {
@@ -48,7 +50,20 @@ export class HomePage extends Component {
 				}),
 			),
 		});
+
+		window.addEventListener('resize', this.handleWindowResize);
 	}
+
+	componentDidUnmount() {
+		window.removeEventListener('resize', this.handleWindowResize);
+	}
+
+	handleWindowResize = (event) => {
+		this.setState({
+			width: event.target.innerWidth,
+			height: event.target.innerHeight,
+		});
+	};
 
 	// componentDidUpdate(prevProps) {
 	// 	console.log(prevProps.router.query, this.props.router.query);
@@ -228,6 +243,8 @@ export class HomePage extends Component {
 			tooltipY,
 			tooltipContent,
 			triggerUpdateDimensionsId,
+			// width,
+			// height,
 		} = this.state;
 
 		// Set up insights
@@ -299,10 +316,7 @@ export class HomePage extends Component {
 			>
 				<main className="home-page">
 					<h1 className="home-page__title">
-						{mode === 'insight' && (
-							<Fragment>Insights</Fragment>
-							// <Fragment>What Makes a &lsquo;Good&rsquo; Government?</Fragment>
-						)}
+						{mode === 'insight' && <Fragment>Insights</Fragment>}
 
 						{mode === 'dashboard' && (
 							<Fragment>

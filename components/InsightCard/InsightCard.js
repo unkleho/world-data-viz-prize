@@ -87,48 +87,43 @@ class InsightCard extends Component {
 							].join(' ')}
 							key={i}
 						>
-							<p dangerouslySetInnerHTML={{ __html: insight.content }} />
+							{i === insights.length - 1 ? (
+								<p>
+									Project by{' '}
+									<strong>
+										<a
+											href="https://www.twitter.com/unkleho"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Kaho Cheung
+										</a>
+									</strong>{' '}
+									and{' '}
+									<strong>
+										{' '}
+										<a
+											href="https://www.twitter.com/sunanda_creagh"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Sunanda Creagh
+										</a>
+									</strong>.
+									<br />
+									<br />
+									<Link to="/">
+										{/* eslint-disable */}
+										<a className="cta-button">Explore this Dataset</a>
+										{/* eslint-enable */}
+									</Link>
+								</p>
+							) : (
+								<p dangerouslySetInnerHTML={{ __html: insight.content }} />
+							)}
 						</div>
 					);
 				})}
-
-				<div
-					className={[
-						'insight-card__step',
-						insights.length === index ? 'insight-card__step--is-selected' : '',
-					].join(' ')}
-				>
-					<p>
-						Project by{' '}
-						<strong>
-							<a
-								href="https://www.twitter.com/unkleho"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								Kaho Cheung
-							</a>
-						</strong>{' '}
-						and{' '}
-						<strong>
-							{' '}
-							<a
-								href="https://www.twitter.com/sunanda_creagh"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								Sunanda Creagh
-							</a>
-						</strong>.
-						<br />
-						<br />
-						<Link to="/">
-							{/* eslint-disable */}
-							<a className="cta-button">Explore this Dataset</a>
-							{/* eslint-enable */}
-						</Link>
-					</p>
-				</div>
 
 				{/* <SwipeableViews
 					enableMouseEvents

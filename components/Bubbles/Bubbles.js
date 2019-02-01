@@ -207,7 +207,7 @@ export default class Bubbles extends React.Component {
 			.exit()
 			.selectAll('circle')
 			.transition()
-			.duration(2000)
+			.duration(1000)
 			// .duration((d) => {
 			// 	return 500 + d.country.length * 100;
 			// })

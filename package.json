@@ -1,5 +1,5 @@
 {
-	"name": "world-data-viz-prize",
+	"name": "good-gov",
 	"author": "Kaho Cheung",
 	"version": "0.0.1",
 	"scripts": {
@@ -12,16 +12,15 @@
 		"jest": "node -r dotenv/config ./node_modules/.bin/jest",
 		"test": "npm run jest -- --bail --findRelatedTests",
 		"test:watch": "npm run jest -- --watch",
-		"test:lint":
-			"eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
+		"test:lint": "eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
 		"precommit": "lint-staged"
 	},
 	"engines": {
-		"node": "~8.9.0"
+		"node": "12.x"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/unkleho/next-starter-kit"
+		"url": "https://github.com/unkleho/good-gov"
 	},
 	"dependencies": {
 		"@mdi/font": "^3.3.92",
